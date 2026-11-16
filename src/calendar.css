@@ -1,0 +1,1578 @@
+/* ------------------------------------------------------------ calendar */
+
+:root {
+  /* Dashboard-only events: script-paper cream, warm against Google's mostly cool colours. */
+  --cal-local: #e8d6b0;
+  /* Card due dates from the Work boards. */
+  --cal-deadline: #f472b6;
+  --now: var(--red);
+}
+
+/*
+ * Events take their calendar's colour as --ev and wear it as a lit block: an
+ * opaque tint that's brighter at the top, a lit top edge, a straight band of
+ * the full colour down the left, and ink that's nearly white with a touch of it.
+ */
+.ev-block,
+.ev-bar,
+.mo-ev,
+.ag-ev {
+  --ev-tint: color-mix(in oklab, var(--ev) 24%, #18191d);
+  --ev-top: color-mix(in oklab, var(--ev) 36%, #1b1c21);
+  --ev-ink: color-mix(in oklab, var(--ev) 22%, white);
+  --ev-lit: linear-gradient(180deg, var(--ev-top), var(--ev-tint));
+  --ev-edge: inset 0 1px 0 color-mix(in oklab, var(--ev) 45%, rgb(255 255 255 / 0.35)), inset 0 0 0 1px color-mix(in oklab, var(--ev) 30%, transparent);
+}
+
+.cal-page {
+  max-width: 1480px;
+  /*
+   * The calendar's faces carry the page's light rather than sitting on it as
+   * grey slabs: opaque (the week's header is sticky), but mixed toward the
+   * area's red at the top and its orange toward the foot. Lines take a touch
+   * of the red too, so the grid reads as one warm instrument.
+   */
+  --cal-face-top: color-mix(in oklab, var(--area) 10%, #1b1a21);
+  --cal-face: color-mix(in oklab, var(--area) 6%, #18171e);
+  --cal-face-low: color-mix(in oklab, var(--area-2) 6%, #17171c);
+  --cal-line: color-mix(in oklab, var(--area) 10%, rgb(255 255 255 / 0.065));
+  --cal-line-strong: color-mix(in oklab, var(--area) 14%, rgb(255 255 255 / 0.1));
+  --cal-weekend: color-mix(in oklab, var(--area-2) 4%, rgb(0 0 0 / 0.16));
+}
+
+.cal-top {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.cal-top-left,
+.cal-top-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cal-period {
+  min-width: 11ch;
+  font-variant-numeric: proportional-nums;
+  letter-spacing: -0.03em;
+}
+
+.cal-step {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.segmented .seg-link {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 13px;
+  border-radius: 7px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-weight: 520;
+  text-decoration: none;
+  transition: background 0.2s var(--ease), color 0.15s, box-shadow 0.2s;
+}
+
+.segmented .seg-link:hover {
+  color: var(--text);
+}
+
+.segmented .seg-link[aria-pressed='true'] {
+  background: linear-gradient(180deg, #34353d, #2a2b32);
+  color: var(--text);
+  font-weight: 580;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(0 0 0 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+/* Calendars on/off, and how the link with Google is doing. */
+.cal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+  min-height: 32px;
+  margin-bottom: 16px;
+}
+
+.cal-cals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.cal-chip:hover {
+  background: var(--wash);
+}
+
+.cal-chip[aria-pressed='true'] {
+  background: var(--fill-strong);
+}
+
+.cal-chip[aria-pressed='false'] {
+  color: var(--text-3);
+}
+
+.cal-chip[aria-pressed='false']:hover {
+  color: var(--text-2);
+}
+
+.cal-chip.static {
+  cursor: default;
+}
+
+.cal-chip.static:hover {
+  background: transparent;
+}
+
+.cal-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  flex: none;
+}
+
+.cal-sync {
+  color: var(--text-3);
+  font-size: var(--t-sm);
+}
+
+.cal-sync.bad {
+  color: var(--danger);
+}
+
+.cal-connect {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 18px 20px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(100% 80% at 0% 0%, color-mix(in oklab, var(--area) 14%, transparent), transparent 70%),
+    var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.cal-connect strong {
+  font-weight: 600;
+}
+
+.cal-connect p {
+  margin-top: 2px;
+  max-width: 64ch;
+}
+
+/* ------------------------------------------------------------ week */
+
+/*
+ * The week: one opaque instrument face (its header is sticky, so nothing may
+ * show through), a shade lighter at the top like the panels around it.
+ */
+.wk {
+  --gutter-w: 68px;
+  --wk-bg: var(--cal-face);
+  --col-gap: var(--cal-face);
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(70% 420px at 0% 0%, color-mix(in oklab, var(--area) 8%, transparent), transparent 75%),
+    radial-gradient(60% 520px at 100% 100%, color-mix(in oklab, var(--area-2) 7%, transparent), transparent 75%),
+    linear-gradient(180deg, var(--cal-face-top), var(--cal-face) 300px, var(--cal-face-low));
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--area) 22%, rgb(255 255 255 / 0.08)), inset 0 0 0 1px var(--cal-line), var(--shadow);
+  overflow: hidden;
+}
+
+.wk-head,
+.wk-allday,
+.wk-body {
+  display: grid;
+  grid-template-columns: var(--gutter-w) repeat(var(--days), minmax(0, 1fr));
+}
+
+/* Headings and the all-day lane stay put while the hours scroll under them. */
+.wk-top {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background:
+    radial-gradient(70% 140% at 0% 0%, color-mix(in oklab, var(--area) 9%, transparent), transparent 75%),
+    linear-gradient(180deg, color-mix(in oklab, var(--area) 11%, #1c1b22), color-mix(in oklab, var(--area) 8%, #1a191f));
+  box-shadow: 0 10px 24px -14px rgb(0 0 0 / 0.8);
+}
+
+.wk-head {
+  box-shadow: inset 0 -1px 0 var(--cal-line);
+}
+
+/* A day's heading: its weekday small, its date large, wide and light. */
+.wk-day-head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 14px 14px 12px;
+  color: var(--text-3);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.wk-day-head:hover {
+  background: var(--wash);
+}
+
+.wk-dow {
+  font-size: var(--t-xs);
+  font-weight: 560;
+  letter-spacing: 0.01em;
+}
+
+.wk-num {
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 1.625rem;
+  font-weight: 300;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.wk-day-head.past .wk-num {
+  color: var(--text-3);
+}
+
+.wk-day-head.today {
+  color: var(--text);
+  background: radial-gradient(80% 110% at 50% 0%, color-mix(in oklab, var(--now) 20%, transparent), transparent);
+}
+
+/* Today's date in its red circle, glowing a little. */
+.wk-day-head.today .wk-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 34px;
+  margin: -3px 0 -3px -6px;
+  padding: 0 7px 0 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--now) 80%, white), var(--now));
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 560;
+  letter-spacing: -0.03em;
+  box-shadow: 0 6px 18px -4px color-mix(in oklab, var(--now) 80%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.35);
+}
+
+.wk-day-head.today .wk-dow {
+  color: color-mix(in oklab, var(--now) 80%, white);
+  font-weight: 650;
+}
+
+.wk-allday {
+  min-height: 34px;
+  padding: 5px 0;
+  row-gap: 3px;
+  box-shadow: inset 0 -1px 0 var(--cal-line-strong);
+}
+
+.wk-allday-label {
+  align-self: center;
+  padding-right: 12px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.wk-allday-slot {
+  grid-row: 1;
+  border: 0;
+  box-shadow: inset 1px 0 0 var(--cal-line);
+  margin: -5px 0;
+  background: transparent;
+  cursor: copy;
+  transition: background 0.15s;
+}
+
+.wk-allday-slot:hover {
+  background: var(--wash);
+}
+
+.ev-bar {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  height: 24px;
+  margin: 0 3px;
+  padding: 0 9px 0 10px;
+  border: 0;
+  border-radius: 7px;
+  /* A straight band of colour down the left edge (an inset shadow would curve with the corners). */
+  background: linear-gradient(90deg, var(--ev) 3px, transparent 3px), var(--ev-lit);
+  box-shadow: var(--ev-edge), 0 2px 6px -2px rgb(0 0 0 / 0.5);
+  color: var(--ev-ink);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.ev-bar.cut-start {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: 0;
+  background: var(--ev-lit);
+}
+
+.ev-bar.cut-end {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-right: 0;
+}
+
+.wk-scroll {
+  max-height: max(520px, calc(100vh - 220px));
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cal-line-strong) transparent;
+}
+
+.wk-body {
+  position: relative;
+  /* Hour lines across every column, and fainter half hours. */
+  background-image:
+    linear-gradient(to bottom, var(--cal-line) 1px, transparent 1px),
+    linear-gradient(to bottom, transparent 24px, color-mix(in oklab, var(--area) 8%, rgb(255 255 255 / 0.025)) 24px, color-mix(in oklab, var(--area) 8%, rgb(255 255 255 / 0.025)) 25px, transparent 25px);
+  background-size: 100% 48px;
+}
+
+.wk-hours {
+  position: relative;
+}
+
+.wk-hours span {
+  position: absolute;
+  right: 12px;
+  translate: 0 -50%;
+  color: color-mix(in oklab, var(--area) 15%, var(--text-3));
+  font-size: 10.5px;
+  font-weight: 540;
+  letter-spacing: 0.01em;
+  font-variant-numeric: proportional-nums;
+  white-space: nowrap;
+}
+
+/* The time now: a red pill in the hours, glowing. */
+.wk-hours .now-label {
+  z-index: 4;
+  right: 6px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--now) 85%, white), var(--now));
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 680;
+  letter-spacing: 0;
+  box-shadow: 0 0 14px color-mix(in oklab, var(--now) 70%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.3);
+}
+
+/* Columns are divided by hairlines; the weekend sits a shade darker. */
+.wk-col {
+  position: relative;
+  box-shadow: inset 1px 0 0 var(--cal-line);
+  cursor: copy;
+  touch-action: none;
+}
+
+.wk-col.weekend {
+  background-color: var(--cal-weekend);
+}
+
+/* Today's column is lit in the now red, brightest near the top and never quite gone. */
+.wk-col.today {
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--now) 11%, transparent), color-mix(in oklab, var(--now) 3%, transparent) 45%, color-mix(in oklab, var(--now) 2%, transparent)),
+    rgb(255 255 255 / 0.03);
+}
+
+.ev-block {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 5px 7px 4px 11px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--ev) 3px, transparent 3px), var(--ev-lit);
+  /* A ring of the grid's colour keeps side-by-side blocks apart. */
+  box-shadow: var(--ev-edge), 0 0 0 1.5px var(--col-gap), 0 6px 14px -6px rgb(0 0 0 / 0.7);
+  color: var(--ev-ink);
+  text-align: left;
+  overflow: hidden;
+  container-type: inline-size;
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.2s;
+}
+
+.ev-block:hover,
+.ev-bar:hover,
+.mo-ev:hover {
+  filter: brightness(1.16);
+}
+
+.ev-block:hover {
+  z-index: 2;
+  box-shadow: var(--ev-edge), 0 0 0 1.5px var(--col-gap), 0 10px 24px -8px color-mix(in oklab, var(--ev) 55%, rgb(0 0 0 / 0.8));
+}
+
+.ev-block.short {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ev-title {
+  max-width: 100%;
+  font-size: var(--t-sm);
+  font-weight: 620;
+  letter-spacing: -0.008em;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--title-lines, 3);
+  -webkit-box-orient: vertical;
+}
+
+/* One line: cut mid-word, so "Mel Scre…" rather than just "Mel…". */
+.ev-title.one-line,
+.ev-block.short .ev-title {
+  -webkit-line-clamp: 1;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  display: block;
+}
+
+.ev-time,
+.ev-loc {
+  max-width: 100%;
+  color: color-mix(in oklab, var(--ev-ink) 70%, transparent);
+  font-size: var(--t-xs);
+  font-variant-numeric: proportional-nums;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ev-block.short .ev-time {
+  flex: none;
+}
+
+/* A short block side by side with another is too narrow for both: the title wins. */
+@container (width < 140px) {
+  .ev-block.short .ev-time {
+    display: none;
+  }
+}
+
+/*
+ * What's over steps back but stays crisp: a thinner tint of its colour, the
+ * band at full colour so it's still recognisably that calendar, and ink in
+ * the secondary grey. No fading or desaturating the whole block, which turns
+ * it to mud against the warm face.
+ */
+.ev-block.past,
+.ev-bar.past,
+.mo-ev.past,
+.ag-ev.past {
+  --ev-tint: color-mix(in oklab, var(--ev) 11%, var(--cal-face));
+  --ev-top: color-mix(in oklab, var(--ev) 17%, var(--cal-face));
+  --ev-ink: color-mix(in oklab, var(--ev) 18%, var(--text-2));
+  --ev-edge: inset 0 1px 0 color-mix(in oklab, var(--ev) 22%, rgb(255 255 255 / 0.1)), inset 0 0 0 1px color-mix(in oklab, var(--ev) 22%, transparent);
+}
+
+.ev-block.past .ev-time,
+.ev-bar.past .ev-time {
+  color: var(--text-3);
+}
+
+.ev-block.past:hover,
+.ev-bar.past:hover,
+.mo-ev.past:hover {
+  --ev-ink: color-mix(in oklab, var(--ev) 22%, white);
+}
+
+.mo-ev.past:not(.allday),
+.ag-ev.past {
+  color: var(--text-2);
+}
+
+/* The event being drawn: a glass block in the dashboard's cream, with its times. */
+.ev-ghost {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  z-index: 2;
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1px dashed color-mix(in oklab, var(--cal-local) 70%, transparent);
+  background: color-mix(in oklab, var(--cal-local) 14%, rgb(255 255 255 / 0.04));
+  box-shadow: 0 8px 22px -8px rgb(0 0 0 / 0.7);
+  color: var(--text);
+  font-size: var(--t-xs);
+  font-weight: 620;
+  font-variant-numeric: proportional-nums;
+  pointer-events: none;
+}
+
+/* Now: a red line across today, glowing, with a lit bead where it starts. */
+.now-line {
+  position: absolute;
+  left: -1px;
+  right: 0;
+  z-index: 3;
+  height: 2px;
+  background: linear-gradient(90deg, var(--now), color-mix(in oklab, var(--now) 70%, transparent));
+  box-shadow: 0 0 10px color-mix(in oklab, var(--now) 80%, transparent);
+  pointer-events: none;
+}
+
+.now-line::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--now) 75%, white);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--now) 30%, transparent), 0 0 12px var(--now);
+}
+
+/* ------------------------------------------------------------ month */
+
+.mo {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--area) 30%, rgb(255 255 255 / 0.08)), inset 0 0 0 1px var(--cal-line), var(--shadow);
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(60% 360px at 0% 0%, color-mix(in oklab, var(--area) 6%, transparent), transparent 75%),
+    radial-gradient(60% 520px at 100% 100%, color-mix(in oklab, var(--area-2) 7%, transparent), transparent 75%),
+    linear-gradient(180deg, color-mix(in oklab, var(--area) 4%, rgb(255 255 255 / 0.04)), color-mix(in oklab, var(--area-2) 3%, rgb(255 255 255 / 0.025)));
+  overflow: hidden;
+}
+
+.mo-dow {
+  padding: 13px 14px 11px;
+  border-bottom: 1px solid var(--cal-line);
+  background: color-mix(in oklab, var(--area) 3%, rgb(255 255 255 / 0.025));
+  color: var(--text-3);
+  font-size: var(--t-xs);
+  font-weight: 560;
+  letter-spacing: 0.01em;
+}
+
+.mo-dow:nth-child(n + 6) {
+  color: color-mix(in oklab, var(--text-3) 80%, transparent);
+}
+
+.mo-cell {
+  position: relative;
+  min-width: 0;
+  min-height: 124px;
+  padding: 8px 5px 6px;
+  border-top: 1px solid var(--cal-line);
+  border-left: 1px solid var(--cal-line);
+}
+
+/* The weekend columns in the deeper warm shade, as in the week. */
+.mo-cell:nth-child(7n + 6),
+.mo-cell:nth-child(7n + 7) {
+  background: var(--cal-weekend);
+}
+
+/* Today's cell is lit from its top, the same light as today's column in the week. */
+.mo-cell.today {
+  background:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--now) 18%, transparent), transparent 70%),
+    color-mix(in oklab, var(--now) 3%, rgb(255 255 255 / 0.035));
+}
+
+.mo-cell:nth-child(7n + 1) {
+  border-left: 0;
+}
+
+.mo-dow + .mo-cell,
+.mo-dow ~ .mo-cell:nth-child(-n + 14) {
+  border-top: 0;
+}
+
+.mo-cell.outside {
+  background: color-mix(in oklab, var(--area) 3%, rgb(0 0 0 / 0.22));
+}
+
+.mo-new {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: copy;
+}
+
+.mo-new {
+  transition: background 0.15s;
+}
+
+.mo-new:hover {
+  background: var(--wash);
+}
+
+.mo-num {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  margin: 0 0 5px 3px;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: var(--text);
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 1.0625rem;
+  font-weight: 340;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.mo-num:hover {
+  background: var(--wash-strong);
+}
+
+.mo-cell.outside .mo-num,
+.mo-cell.past .mo-num {
+  color: var(--text-3);
+}
+
+.mo-cell.today .mo-num {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--now) 80%, white), var(--now));
+  color: #fff;
+  font-weight: 560;
+  box-shadow: 0 6px 16px -4px color-mix(in oklab, var(--now) 80%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.35);
+}
+
+.mo-events {
+  position: relative;
+  display: grid;
+  /* The cell's width, not the longest title's: long names end in an ellipsis. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.mo-events > li {
+  min-width: 0;
+}
+
+.mo-events > li > * {
+  pointer-events: auto;
+}
+
+.mo-ev {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 22px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--t-xs);
+  font-weight: 520;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.15s, filter 0.15s;
+}
+
+.mo-ev:not(.allday):hover {
+  background: var(--wash-strong);
+  filter: none;
+}
+
+.mo-ev::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ev);
+  box-shadow: 0 0 6px color-mix(in oklab, var(--ev) 70%, transparent);
+  flex: none;
+}
+
+.mo-ev.allday {
+  background: linear-gradient(90deg, var(--ev) 3px, transparent 3px), var(--ev-lit);
+  box-shadow: var(--ev-edge);
+  padding-left: 9px;
+  color: var(--ev-ink);
+  font-weight: 620;
+}
+
+.mo-ev.allday::before {
+  display: none;
+}
+
+.mo-time {
+  color: var(--text-3);
+  flex: none;
+}
+
+.mo-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mo-more {
+  display: inline-block;
+  padding: 2px 6px;
+  color: var(--text-2);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.mo-more:hover {
+  color: var(--text);
+}
+
+/* ------------------------------------------------------------ agenda */
+
+.agenda {
+  display: grid;
+  gap: 10px;
+  max-width: 920px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agenda.loading {
+  min-height: 240px;
+}
+
+/* Each day is a card: its date set large, wide and light, beside what's on. */
+.ag-day {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 18px;
+  padding: 18px 16px 18px 22px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(50% 140% at 0% 0%, color-mix(in oklab, var(--area) 10%, transparent), transparent 75%),
+    linear-gradient(100deg, color-mix(in oklab, var(--area) 7%, rgb(255 255 255 / 0.045)), color-mix(in oklab, var(--area-2) 5%, rgb(255 255 255 / 0.022)));
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--area) 26%, rgb(255 255 255 / 0.07)), inset 0 0 0 1px var(--cal-line), var(--shadow);
+}
+
+.ag-day.today {
+  background:
+    radial-gradient(60% 140% at 0% 0%, color-mix(in oklab, var(--now) 24%, transparent), transparent 70%),
+    linear-gradient(100deg, color-mix(in oklab, var(--now) 9%, rgb(255 255 255 / 0.05)), color-mix(in oklab, var(--area-2) 5%, rgb(255 255 255 / 0.022)));
+}
+
+.ag-day.today .ag-num {
+  color: color-mix(in oklab, var(--now) 75%, white);
+  font-weight: 420;
+  text-shadow: 0 0 20px color-mix(in oklab, var(--now) 60%, transparent);
+}
+
+.ag-date {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-family: var(--sans);
+  font-stretch: 100%;
+  font-size: var(--t-base);
+  font-weight: 540;
+  letter-spacing: -0.004em;
+}
+
+.ag-num {
+  min-width: 2ch;
+  margin-top: -2px;
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 2.125rem;
+  font-weight: 260;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.ag-label {
+  display: grid;
+  gap: 1px;
+  padding-top: 1px;
+  line-height: 1.25;
+}
+
+.ag-label .faint {
+  font-size: var(--t-sm);
+}
+
+.ag-day.today .ag-dow {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.ag-none {
+  padding: 6px 0;
+}
+
+.ag-list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ag-list > li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ag-ev {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  position: relative;
+  padding: 9px 12px 9px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+/* The calendar's colour as a straight rounded bar, not a curved edge, glowing faintly. */
+.ag-ev::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--ev);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--ev) 60%, transparent);
+}
+
+.ag-ev:hover {
+  background: var(--wash-strong);
+}
+
+/* Happening now: the row takes its calendar's lit fill. */
+.ag-ev.now {
+  background: var(--ev-lit);
+  box-shadow: var(--ev-edge);
+}
+
+.ag-time {
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-variant-numeric: proportional-nums;
+  padding-top: 1px;
+}
+
+.ag-body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ag-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  overflow-wrap: anywhere;
+}
+
+.ag-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ag-icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--text-3);
+}
+
+.ag-now {
+  align-self: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--now) 85%, white), var(--now));
+  color: #fff;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  box-shadow: 0 0 14px color-mix(in oklab, var(--now) 60%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.3);
+}
+
+.ag-join {
+  flex: none;
+}
+
+/* ------------------------------------------------------------ event drawer */
+
+.ev-where {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ev-where .link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+.ev-where svg {
+  width: 13px;
+  height: 13px;
+}
+
+.ev-form {
+  display: grid;
+  gap: 18px;
+}
+
+.ev-fields {
+  display: grid;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.ev-join {
+  justify-self: start;
+}
+
+/* The title is written large on a line, the way you'd write it on paper. */
+.ev-title-input {
+  height: 52px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line-strong) !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: 1.5rem !important;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  transition: border-color 0.2s;
+}
+
+.ev-title-input:focus {
+  border-bottom-color: color-mix(in oklab, var(--accent) 85%, white) !important;
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--accent) 85%, white) !important;
+}
+
+.ev-when {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) minmax(0, 120px);
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.ev-when-label {
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.ev-when.all-day {
+  grid-template-columns: 56px minmax(0, 1fr);
+}
+
+.ev-when-text {
+  margin-top: -10px;
+}
+
+.ev-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+}
+
+.ev-note svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* A plain on/off switch, built on a real checkbox. */
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: start;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.switch-track {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.28);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 0 1px 2px rgb(0 0 0 / 0.35);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.switch-track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #d9dbe2, #a9acb6);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+  transition: translate 0.3s var(--spring), background 0.15s;
+}
+
+.switch input:checked + .switch-track {
+  background: linear-gradient(180deg, #ffffff, #dcdee5);
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.14), 0 4px 12px -4px rgb(255 255 255 / 0.3);
+}
+
+.switch input:checked + .switch-track::after {
+  translate: 16px 0;
+  background: linear-gradient(180deg, #2a2b31, #15161a);
+}
+
+.switch input:focus-visible + .switch-track {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--text);
+}
+
+.check span {
+  display: grid;
+  gap: 2px;
+  font-weight: 500;
+}
+
+.check small {
+  font-weight: 400;
+}
+
+.check.disabled {
+  cursor: default;
+  color: var(--text-3);
+}
+
+/* ------------------------------------------------------------ narrow screens */
+
+@media (max-width: 720px) {
+  .wk {
+    --gutter-w: 40px;
+  }
+  .wk-day-head {
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 0;
+  }
+  .wk-dow {
+    font-size: var(--t-xs);
+  }
+  .wk-num {
+    font-size: 1.125rem;
+  }
+  .wk-day-head.today .wk-num {
+    min-width: 28px;
+    height: 28px;
+    margin: -2px 0;
+    padding: 0 6px;
+    font-size: 1rem;
+  }
+  .wk-hours span {
+    right: 4px;
+    font-size: 10px;
+  }
+  /* Too wide for the narrow gutter: it runs into the grid rather than off the edge. */
+  .wk-hours .now-label {
+    right: auto;
+    left: 2px;
+    font-size: 9.5px;
+    padding: 1px 5px;
+  }
+  .wk-allday-label {
+    font-size: 0;
+  }
+  .ev-block {
+    padding: 2px 3px 2px 5px;
+  }
+  .ev-time,
+  .ev-loc {
+    display: none;
+  }
+  .mo-cell {
+    min-height: 72px;
+  }
+  .mo-time,
+  .mo-title {
+    display: none;
+  }
+  .mo-ev {
+    justify-content: center;
+    padding: 0;
+  }
+  .mo-ev.allday::before {
+    display: block;
+  }
+  .ag-day {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .ag-ev,
+  .schedule .ag-ev {
+    grid-template-columns: 1fr auto;
+  }
+  .ag-time {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ------------------------------------------------------------ side column */
+
+/* Quick add, a month to jump around in, and the calendars, beside the grid. */
+.cal-layout {
+  display: grid;
+  grid-template-columns: 256px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.cal-side {
+  position: sticky;
+  top: calc(var(--bar-h) + 20px);
+  display: grid;
+  gap: 14px;
+}
+
+.cal-page .cal-top {
+  margin-bottom: 20px;
+}
+
+.cal-page .wk-scroll {
+  max-height: calc(100dvh - var(--frame) * 2 - var(--bar-h) - 48px);
+}
+
+@media (max-width: 1100px) {
+  .cal-layout {
+    grid-template-columns: 1fr;
+  }
+  .cal-side {
+    position: static;
+    order: 2;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    align-items: start;
+  }
+}
+
+/* Quick add: a field that reads what you type back to you before you commit. */
+.quick-add {
+  display: grid;
+  gap: 8px;
+}
+
+/* A well to type into, with a lit plus key at its start. */
+.quick-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 12px 0 7px;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.24);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.09), inset 0 1px 2px rgb(0 0 0 / 0.25), 0 1px 0 rgb(255 255 255 / 0.03);
+  cursor: text;
+  transition: box-shadow 0.15s;
+}
+
+.quick-field:hover {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15), inset 0 1px 2px rgb(0 0 0 / 0.25), 0 1px 0 rgb(255 255 255 / 0.03);
+}
+
+.quick-field:focus-within {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 85%, white), 0 0 0 3px color-mix(in oklab, var(--accent) 28%, transparent);
+}
+
+.quick-field svg {
+  width: 28px;
+  height: 28px;
+  padding: 7px;
+  flex: none;
+  border-radius: 8px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--area) 40%, #2a2b31), color-mix(in oklab, var(--area) 22%, #1d1e23));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 0 0 1px color-mix(in oklab, var(--area) 40%, transparent), 0 2px 6px rgb(0 0 0 / 0.4);
+  color: #fff;
+  stroke-width: 2.4;
+}
+
+.quick-field input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--t-sm);
+  outline: none;
+}
+
+.quick-field input::placeholder {
+  color: var(--text-3);
+}
+
+/* What it understood: a lit card in the dashboard's cream, the way the event will look. */
+.quick-preview {
+  --ev: var(--cal-local);
+  display: grid;
+  gap: 2px;
+  padding: 11px 13px 11px 16px;
+  border-radius: 11px;
+  background: linear-gradient(90deg, var(--ev) 3px, transparent 3px), linear-gradient(180deg, color-mix(in oklab, var(--ev) 20%, #1e1f24), color-mix(in oklab, var(--ev) 10%, #19191e));
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--ev) 35%, rgb(255 255 255 / 0.2)), inset 0 0 0 1px color-mix(in oklab, var(--ev) 20%, transparent), 0 10px 24px -12px rgb(0 0 0 / 0.8);
+  font-size: var(--t-sm);
+  animation: menu-in 0.2s var(--spring);
+}
+
+.quick-preview strong {
+  color: color-mix(in oklab, var(--ev) 25%, white);
+  font-weight: 640;
+}
+
+.quick-preview span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-2);
+}
+
+.quick-preview svg {
+  width: 12px;
+  height: 12px;
+}
+
+.quick-preview .faint {
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: var(--t-xs);
+}
+
+/* The mini month: a small instrument face of its own. */
+.mini {
+  padding: 12px 10px 10px;
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.mini-head {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0 0 8px 6px;
+}
+
+.mini-title {
+  flex: 1;
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: var(--t-sm);
+  font-weight: 630;
+  letter-spacing: -0.016em;
+}
+
+.mini-step {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.mini-step:hover {
+  background: var(--wash-strong);
+  color: var(--text);
+}
+
+.mini-step svg {
+  width: 14px;
+  height: 14px;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px 0;
+}
+
+.mini-dow {
+  padding-bottom: 4px;
+  color: var(--text-3);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.mini-day {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  height: 32px;
+  padding: 4px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--t-xs);
+  font-weight: 520;
+  cursor: pointer;
+}
+
+.mini-day > .num {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-top: -4px;
+  border-radius: 50%;
+  transition: background 0.12s;
+}
+
+.mini-day:hover > .num {
+  background: var(--wash-strong);
+}
+
+.mini-day.other {
+  color: var(--text-3);
+}
+
+/* The week or month in the main view is a soft lit band. */
+.mini-day.shown {
+  background: rgb(255 255 255 / 0.055);
+}
+
+.mini-grid > .mini-day.shown:nth-child(7n + 1) {
+  border-radius: 8px 0 0 8px;
+}
+
+.mini-grid > .mini-day.shown:nth-child(7n) {
+  border-radius: 0 8px 8px 0;
+}
+
+.mini-day.today > .num {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--now) 80%, white), var(--now));
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 3px 10px -2px color-mix(in oklab, var(--now) 75%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.3);
+}
+
+.mini-dots {
+  display: flex;
+  gap: 2px;
+  height: 4px;
+  margin-top: -4px;
+}
+
+.mini-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+/* The calendars, as a list down the column, ticked when shown. */
+.cal-side .cal-bar {
+  display: grid;
+  justify-content: stretch;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 6px 10px;
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.cal-side .cal-bar:empty {
+  display: none;
+}
+
+.cal-side .cal-cals {
+  display: grid;
+  gap: 1px;
+}
+
+.cal-side .cal-chip {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cal-side .cal-chip:hover {
+  background: var(--wash-strong);
+}
+
+/* Each calendar's colour as a small lit key; hollow when hidden. */
+.cal-side .cal-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+}
+
+.cal-side .cal-chip[aria-pressed='false'] .cal-swatch {
+  box-shadow: none;
+}
+
+.cal-side .cal-chip[aria-pressed='true'] {
+  background: transparent;
+}
+
+.cal-side .cal-chip[aria-pressed='true']:hover {
+  background: var(--wash-strong);
+}
+
+.cal-side .cal-sync {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 2px;
+  padding: 8px 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: var(--t-xs);
+}
+
+/* A small green light while the link with Google is healthy. */
+.cal-side .cal-sync:not(.bad)::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+.cal-side .cal-connect {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 14px;
+  font-size: var(--t-sm);
+}

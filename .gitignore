@@ -1,0 +1,25 @@
+node_modules/
+dist/
+data/
+incoming/
+*.log
+.env
+
+.env.*
+!.env.example
+releases/
+
+# Local agent state, credentials, database copies and OS metadata.
+.claude/
+.codex/
+.agents/
+*.pem
+*.key
+*.p12
+*.pfx
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+.DS_Store
+Thumbs.db

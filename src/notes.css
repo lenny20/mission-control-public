@@ -1,0 +1,1464 @@
+/* ------------------------------------------------------------ notes area */
+
+.tab-count {
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--wash-strong);
+  color: var(--text-2);
+  font-size: var(--t-xs);
+}
+
+.input-sm {
+  height: 30px !important;
+  font-size: var(--t-sm) !important;
+  padding: 0 10px !important;
+}
+
+/* ------------------------------------------------------------ ideas */
+
+/* A single column, centred: a place to write first and sort after. */
+.ideas {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-top: 12px;
+}
+
+.ideas .section {
+  margin-top: 44px;
+}
+
+/*
+ * The composer: a panel lit from its top-left in the area's colour, a spark
+ * marking where words go, and the keys along the foot.
+ */
+.capture {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px 14px;
+  padding: 22px 22px 14px;
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(70% 120% at 0% 0%, color-mix(in oklab, var(--area) 11%, transparent), transparent 65%),
+    var(--panel);
+  box-shadow: var(--hairline);
+  transition: box-shadow 0.25s var(--ease), background 0.25s;
+}
+
+.capture:focus-within {
+  background:
+    radial-gradient(70% 120% at 0% 0%, color-mix(in oklab, var(--area) 16%, transparent), transparent 65%),
+    var(--panel-hover);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--area) 38%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 0 0 4px color-mix(in oklab, var(--area) 10%, transparent),
+    0 24px 50px -24px rgb(0 0 0 / 0.85);
+}
+
+.capture-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-top: 1px;
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--area) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--area) 28%, transparent);
+  color: color-mix(in oklab, var(--area) 75%, white);
+}
+
+.capture-mark svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+.capture-input {
+  width: 100%;
+  min-height: 84px;
+  padding: 3px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.1875rem;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  resize: none;
+  field-sizing: content;
+}
+
+.capture-input::placeholder {
+  color: var(--text-3);
+}
+
+.capture-input:focus {
+  outline: none;
+}
+
+.capture-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 -8px 0 -8px;
+  padding: 12px 8px 0;
+  box-shadow: inset 0 1px 0 var(--line);
+}
+
+.capture-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  color: var(--text-3);
+  font-size: var(--t-xs);
+}
+
+.capture-keys > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.capture-keys kbd {
+  height: 19px;
+  padding: 0 6px;
+  box-shadow: inset 0 0 0 1px var(--line), inset 0 -1px 0 rgb(0 0 0 / 0.25);
+}
+
+.idea-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.idea-list:empty {
+  display: none;
+}
+
+/* One row per idea: the words on the left, its age and a Sort menu on the right. */
+.idea {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 60px;
+  padding: 12px 12px 12px 20px;
+  transition: background 0.15s;
+}
+
+.idea-list:not(.done) .idea:hover {
+  background: var(--wash);
+}
+
+.idea + .idea {
+  box-shadow: inset 0 1px 0 var(--line);
+}
+
+.idea-list.done {
+  margin-top: 12px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.idea-list.done .idea {
+  justify-content: space-between;
+  min-height: 0;
+  padding: 10px 4px;
+}
+
+.idea-list.done .idea-text {
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.idea-body {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+  min-width: 0;
+}
+
+.idea-text {
+  font-size: 0.9375rem;
+  font-weight: 560;
+  overflow-wrap: anywhere;
+}
+
+.idea-more {
+  color: var(--text-2);
+  white-space: pre-wrap;
+  font-size: var(--t-sm);
+}
+
+.idea-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+}
+
+.idea-age {
+  font-size: var(--t-xs);
+}
+
+.idea-actions .input-sm {
+  width: auto;
+  height: 28px;
+}
+
+.menu-icon {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: var(--text-2);
+}
+
+.menu-item:hover .menu-icon,
+.menu-item:focus-visible .menu-icon {
+  color: #fff;
+}
+
+.menu-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--line);
+}
+
+.idea-outcome a {
+  color: var(--text-2);
+}
+
+/* ------------------------------------------------------------ notes */
+
+.notes-layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.notes-side {
+  position: sticky;
+  top: calc(var(--bar-h) + 24px);
+  display: grid;
+  gap: 10px;
+}
+
+.notes-tools {
+  display: flex;
+  gap: 8px;
+}
+
+.notes-tools .icon-btn {
+  width: 36px;
+  height: 36px;
+}
+
+.note-list {
+  display: grid;
+  gap: 2px;
+  max-height: calc(100vh - 260px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.note-list:empty {
+  display: none;
+}
+
+.note-item {
+  display: grid;
+  gap: 2px;
+  padding: 11px 12px 12px 14px;
+  border-radius: 10px;
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.note-item:hover {
+  background: var(--wash-strong);
+}
+
+/* The open note: a soft highlight with a thin edge in the area's colour. */
+.note-item.on {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--area) 14%, transparent), rgb(255 255 255 / 0.04) 70%);
+  box-shadow: inset 2px 0 0 var(--area), inset 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+
+.note-item-title {
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-weight: 600;
+  letter-spacing: -0.016em;
+}
+
+.note-item-excerpt {
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notes-empty {
+  padding: 40px 0;
+}
+
+.notes-blank {
+  max-width: 860px;
+  min-height: 420px;
+  align-content: center;
+}
+
+/* The note as a page: a toolbar along the top, the words set for reading, and where the file lives at the foot. */
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  max-width: 860px;
+  min-height: calc(100dvh - var(--frame) * 2 - var(--bar-h) - 76px);
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.note-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+
+.note-bar .spacer {
+  flex: 1;
+}
+
+.note-project {
+  width: 180px !important;
+  height: 28px !important;
+}
+
+.note-delete {
+  color: var(--text-3);
+}
+
+.note-delete:hover {
+  color: var(--danger);
+  background: color-mix(in oklab, var(--danger) 12%, transparent);
+}
+
+.note-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: 52px 36px 48px;
+}
+
+.note-title {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: 2.125rem;
+  font-weight: 620;
+  letter-spacing: -0.034em;
+  line-height: 1.12;
+}
+
+.note-title:focus {
+  outline: none;
+}
+
+.note-body {
+  flex: 1;
+  width: 100%;
+  min-height: 50vh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  resize: none;
+  field-sizing: content;
+}
+
+.note-body:focus {
+  outline: none;
+}
+
+.note-body::placeholder {
+  color: var(--text-3);
+}
+
+.note-read {
+  min-height: 30vh;
+}
+
+.note-file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px;
+  box-shadow: inset 0 1px 0 var(--line);
+  color: var(--text-3);
+  font-size: var(--t-xs);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.note-file svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+/* ------------------------------------------------------------ prose (markdown) */
+
+/*
+ * Reading type: a comfortable measure, generous leading, headings in the wide
+ * display voice, and quiet rules. Shared by notes and the document viewer.
+ */
+.prose {
+  max-width: 68ch;
+  color: rgb(242 243 246 / 0.9);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+.prose > * + * {
+  margin-top: 1em;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  margin-top: 1.9em;
+  color: var(--text);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.prose h1 {
+  font-size: 1.75rem;
+  font-weight: 620;
+  letter-spacing: -0.032em;
+}
+
+.prose h2 {
+  font-size: 1.3125rem;
+  font-weight: 620;
+  letter-spacing: -0.026em;
+}
+
+.prose h3 {
+  font-size: 1.0625rem;
+  font-weight: 640;
+  letter-spacing: -0.016em;
+}
+
+.prose h4 {
+  font-family: var(--sans);
+  font-stretch: 100%;
+  font-size: 1rem;
+  font-weight: 640;
+  color: var(--text-2);
+}
+
+.prose h1 + *,
+.prose h2 + *,
+.prose h3 + *,
+.prose h4 + * {
+  margin-top: 0.6em;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose strong {
+  color: var(--text);
+  font-weight: 640;
+}
+
+.prose a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--accent-text) 40%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--accent-text);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+
+.prose li + li {
+  margin-top: 0.35em;
+}
+
+.prose li::marker {
+  color: var(--text-3);
+}
+
+.prose code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.05);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.84em;
+}
+
+.prose pre {
+  padding: 16px 18px;
+  border-radius: var(--r-md);
+  background: rgb(0 0 0 / 0.28);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06), inset 0 1px 3px rgb(0 0 0 / 0.3);
+  overflow-x: auto;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.prose pre code {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.prose blockquote {
+  margin-left: 0;
+  padding: 2px 0 2px 18px;
+  border-left: 2px solid color-mix(in oklab, var(--area) 60%, transparent);
+  color: var(--text-2);
+  font-style: italic;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  display: block;
+  overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  color: var(--text-2);
+  font-weight: 600;
+  border-bottom-color: var(--line-strong);
+}
+
+.prose hr {
+  margin: 2.2em 0;
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+}
+
+.prose img {
+  max-width: 100%;
+  border-radius: var(--r-md);
+}
+
+/* ------------------------------------------------------------ screenplay */
+
+/* Courier at 12pt prints 10 characters an inch; the indents are the industry's, in characters. */
+.script-page {
+  width: min(100%, 64ch);
+  padding: 56px 0 80px;
+  font-family: var(--script);
+  font-size: 15px;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.script-title {
+  margin-bottom: 48px;
+  font-family: var(--script);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: underline;
+}
+
+.sl {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.sl-sceneHeading {
+  margin-top: 2.5em;
+  font-weight: 700;
+}
+
+.sl-action,
+.sl-general {
+  margin-top: 1.25em;
+}
+
+.sl-character {
+  margin-top: 1.25em;
+  padding-left: 22ch;
+}
+
+.sl-parenthetical {
+  padding-left: 16ch;
+  max-width: 41ch;
+}
+
+.sl-dialogue {
+  padding-left: 10ch;
+  max-width: 45ch;
+}
+
+.sl-transition {
+  margin-top: 1.25em;
+  text-align: right;
+}
+
+.sl-actHeading,
+.sl-endOfAct {
+  margin-top: 2.5em;
+  text-align: center;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.sl-shot {
+  margin-top: 1.25em;
+}
+
+/* ------------------------------------------------------------ links */
+
+.links {
+  display: grid;
+  gap: 24px;
+  max-width: 860px;
+  margin: 0 auto;
+  padding-top: 12px;
+}
+
+.link-add {
+  display: grid;
+  gap: 8px;
+}
+
+.link-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* The address field: a composer bar, lit like the ideas composer. */
+.link-add .quick-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  height: 52px;
+  padding: 0 16px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(60% 160% at 0% 0%, color-mix(in oklab, var(--area) 10%, transparent), transparent 70%),
+    var(--panel);
+  box-shadow: var(--hairline);
+  transition: box-shadow 0.25s var(--ease);
+}
+
+.link-add .quick-field:focus-within {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--area) 38%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 0 0 4px color-mix(in oklab, var(--area) 10%, transparent);
+}
+
+.link-add .quick-field svg {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  flex: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: color-mix(in oklab, var(--area) 70%, white);
+  stroke-width: 2;
+}
+
+.link-add .quick-field input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--t-md);
+  outline: none;
+}
+
+.link-add .quick-field input::placeholder {
+  color: var(--text-3);
+}
+
+.link-add-row .btn {
+  height: 52px;
+  padding: 0 20px;
+  border-radius: var(--r-lg);
+}
+
+.link-add-more {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 8px;
+  animation: menu-in 0.18s var(--ease);
+}
+
+.link-add-more .link-note {
+  grid-column: 1 / -1;
+}
+
+/* Saved links as one list: a tile for the site, the title and site, the note, the project. */
+.link-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.link-list:empty {
+  display: none;
+}
+
+.link-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 14px 16px 18px;
+  transition: background 0.15s;
+}
+
+.link-row:hover {
+  background: var(--wash);
+}
+
+.link-row + .link-row {
+  box-shadow: inset 0 1px 0 var(--line);
+}
+
+/* The site's tile: its first letter on a glossy chip of its own hue, drawn here. */
+.link-tile {
+  --hue: 220;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 11px;
+  background:
+    radial-gradient(100% 80% at 30% 0%, rgb(255 255 255 / 0.22), transparent 60%),
+    linear-gradient(160deg, oklch(0.5 0.11 var(--hue)), oklch(0.3 0.07 var(--hue)));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), 0 6px 16px -8px oklch(0.45 0.12 var(--hue));
+  color: oklch(0.96 0.03 var(--hue));
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: 1.0625rem;
+  font-weight: 640;
+}
+
+.link-body {
+  display: grid;
+  flex: 1;
+  gap: 4px;
+  min-width: 0;
+}
+
+.link-main {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.link-main:hover .link-title {
+  text-decoration: underline;
+  text-decoration-color: var(--text-3);
+  text-underline-offset: 3px;
+}
+
+.link-title {
+  font-weight: 600;
+}
+
+.link-title svg {
+  width: 12px;
+  height: 12px;
+  color: var(--text-3);
+}
+
+.link-url {
+  color: var(--text-3);
+  font-size: var(--t-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-note-text {
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+
+.link-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.link-delete {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.link-row:hover .link-delete,
+.link-delete:focus-visible {
+  opacity: 1;
+}
+
+.link-delete:hover {
+  background: color-mix(in oklab, var(--danger) 14%, transparent);
+  color: var(--danger);
+}
+
+.link-delete svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ------------------------------------------------------------ doc search */
+
+.docs {
+  display: grid;
+  gap: 28px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding-top: 12px;
+}
+
+.docs-search {
+  display: grid;
+  gap: 14px;
+}
+
+/* The search field: large, with its glass and a lit ring when it has focus. */
+.docs-field {
+  position: relative;
+  display: block;
+}
+
+.docs-field > svg {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 19px;
+  height: 19px;
+  color: var(--text-3);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.docs-field:focus-within > svg {
+  color: color-mix(in oklab, var(--area) 75%, white);
+}
+
+.docs-field .docs-input {
+  padding-left: 52px !important;
+}
+
+.docs-input {
+  height: 58px !important;
+  padding: 0 20px !important;
+  font-size: 1.1875rem !important;
+  border-radius: var(--r-lg) !important;
+  background:
+    radial-gradient(60% 160% at 0% 0%, color-mix(in oklab, var(--area) 9%, transparent), transparent 70%),
+    var(--panel) !important;
+  box-shadow: var(--hairline) !important;
+}
+
+.docs-input:focus {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--area) 40%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 0 0 4px color-mix(in oklab, var(--area) 11%, transparent) !important;
+}
+
+.docs-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Kind filters: quiet pills; the chosen one lit like the selected tab. */
+.docs-kinds .cal-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.035);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-weight: 520;
+  opacity: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.docs-kinds .cal-chip:hover {
+  background: var(--fill);
+  color: var(--text);
+}
+
+.docs-kinds .cal-chip[aria-pressed='true'] {
+  background: linear-gradient(180deg, #34353d, #2a2b32);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(255 255 255 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.1);
+}
+
+/* Each kind's filter carries its colour: a lit dot, and a wash of it when chosen. */
+.docs-kinds .kind-chip {
+  gap: 8px;
+}
+
+.kind-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--hue);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--hue) 70%, transparent);
+}
+
+.docs-kinds .kind-chip:hover {
+  background: color-mix(in oklab, var(--hue) 10%, transparent);
+}
+
+.docs-kinds .kind-chip[aria-pressed='true'] {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--hue) 30%, #2a2b32), color-mix(in oklab, var(--hue) 16%, #24252b));
+  color: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.45), inset 0 0 0 1px color-mix(in oklab, var(--hue) 45%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.14), 0 6px 18px -8px color-mix(in oklab, var(--hue) 60%, transparent);
+}
+
+/*
+ * A file's mark: a small page in its kind's colour, the corner folded, its
+ * extension set on it. Markdown is sky, PDF coral, Word indigo, scripts the
+ * cream of script paper, plain text slate.
+ */
+.file-mark {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  width: 30px;
+  height: 36px;
+  flex: none;
+  padding-bottom: 5px;
+  border-radius: 5px 10px 5px 5px;
+  background:
+    linear-gradient(225deg, color-mix(in oklab, var(--hue) 70%, white) 0 7px, transparent 7px),
+    radial-gradient(120% 90% at 30% 0%, color-mix(in oklab, var(--hue) 46%, transparent), transparent 80%),
+    color-mix(in oklab, var(--hue) 20%, #1d1e24);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--hue) 40%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    0 6px 14px -6px color-mix(in oklab, var(--hue) 55%, transparent);
+  color: color-mix(in oklab, var(--hue) 40%, white);
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.docs-count {
+  margin-bottom: 10px;
+}
+
+.doc-hit-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-hit {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  margin: 0 -16px;
+  border-radius: var(--r-md);
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.15s, transform 0.25s var(--spring), box-shadow 0.2s;
+}
+
+.doc-hit:hover,
+.doc-hit:focus-visible {
+  background: var(--wash-strong);
+}
+
+/* A result with its file's mark beside it. */
+.doc-hit.has-mark {
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 14px;
+}
+
+.doc-hit-main {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.doc-hit-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.doc-hit-kind {
+  display: inline-block;
+  margin-right: 7px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--fill);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-2);
+  font-size: var(--t-xs);
+  font-weight: 560;
+  vertical-align: 1px;
+}
+
+.doc-hit-kind.k-script {
+  color: var(--cal-local);
+}
+
+.doc-hit-kind.k-pdf {
+  color: var(--danger);
+}
+
+.doc-hit-kind.k-word {
+  color: var(--training-text);
+}
+
+.doc-hit-path {
+  overflow-wrap: anywhere;
+}
+
+.doc-hit-snippet {
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+.doc-hit-snippet mark,
+.prose mark {
+  padding: 0 2px;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--fat) 32%, transparent);
+  color: var(--text);
+}
+
+/* Recent docs: each day a panel, its files as rows, the folder and time to the right. */
+.doc-hit-list.recent {
+  padding: 4px;
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.doc-hit-list.recent .doc-hit {
+  grid-template-columns: 30px minmax(0, 1fr) minmax(0, max-content);
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: 11px;
+}
+
+.doc-hit-list.recent li + li .doc-hit {
+  box-shadow: inset 0 1px 0 var(--line);
+}
+
+/* Over a row: it lifts a little out of the panel, lit faintly in its kind's colour. */
+.doc-hit-list.recent .doc-hit:hover,
+.doc-hit-list.recent .doc-hit:focus-visible {
+  position: relative;
+  z-index: 1;
+  transform: translateY(-1px);
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.03));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.08), 0 10px 24px -12px rgb(0 0 0 / 0.8);
+}
+
+.doc-hit-list.recent li:hover + li .doc-hit {
+  box-shadow: none;
+}
+
+.doc-hit-list.recent .doc-hit-name {
+  font-weight: 560;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Where it lives: the project as a chip in its own steady colour, the rest of the path faint, then the time. */
+.doc-hit-where {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  max-width: 42vw;
+}
+
+.folder-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 200px;
+  height: 22px;
+  flex: none;
+  padding: 0 9px 0 8px;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--hue) 16%, rgb(0 0 0 / 0.2));
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--hue) 28%, transparent);
+  color: color-mix(in oklch, var(--hue) 60%, white);
+  font-size: 11.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-chip::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--hue);
+  box-shadow: 0 0 6px var(--hue);
+}
+
+.doc-hit-rest {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.docs-recent-title {
+  margin-bottom: 14px;
+}
+
+.docs .block-title {
+  color: var(--text);
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: var(--t-lg);
+  font-weight: 620;
+  letter-spacing: -0.024em;
+}
+
+.docs-day {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 20px;
+  padding: 0;
+}
+
+.docs-day + .docs-day {
+  margin-top: 18px;
+}
+
+/* Each day's heading: a lit dot, the day in the display face, and how many files changed. */
+.docs-day-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  align-self: start;
+  padding-top: 16px;
+  color: var(--text-2);
+  font-size: var(--t-base);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.docs-day-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--area) 50%, var(--text-3));
+}
+
+.docs-day.is-latest .docs-day-name {
+  color: var(--text);
+}
+
+.docs-day.is-latest .docs-day-dot {
+  background: var(--area);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--area) 18%, transparent), 0 0 12px var(--area);
+}
+
+.docs-day-count {
+  margin-left: auto;
+  color: var(--text-3);
+  font-family: var(--sans);
+  font-stretch: 100%;
+  font-size: var(--t-xs);
+  font-weight: 560;
+}
+
+.docs-time {
+  flex: none;
+  min-width: 58px;
+  color: var(--text-3);
+  text-align: right;
+}
+
+/* The latest day's panel is lit from its top left in the area's colour. */
+.docs-day.is-latest .doc-hit-list.recent {
+  background:
+    radial-gradient(70% 160px at 0% 0%, color-mix(in oklab, var(--area) 12%, transparent), transparent 80%),
+    var(--panel);
+}
+
+@media (max-width: 720px) {
+  .docs-day {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .docs-day-name {
+    padding-top: 0;
+  }
+  .doc-hit-list.recent .doc-hit {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+  .doc-hit-where {
+    grid-column: 2;
+    justify-content: flex-start;
+    max-width: none;
+  }
+  .doc-hit-rest {
+    display: none;
+  }
+}
+
+.docs-status {
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.docs-status .bad {
+  color: var(--danger);
+}
+
+/* ------------------------------------------------------------ viewer */
+
+/* A document, read as a page: its name and where it lives, then the words on a lit sheet. */
+.viewer {
+  display: grid;
+  gap: 24px;
+  max-width: 920px;
+  margin: 0 auto;
+  padding-top: 28px;
+}
+
+.viewer-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: start;
+}
+
+.viewer-back svg {
+  width: 16px;
+  height: 16px;
+}
+
+.viewer-head {
+  display: grid;
+  gap: 8px;
+  padding: 0 4px 6px;
+}
+
+.viewer-name {
+  font-size: clamp(1.75rem, 1.4rem + 1vw, 2.375rem);
+  font-weight: 620;
+  letter-spacing: -0.036em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.viewer-meta .link-btn {
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.viewer-fm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 8px 0 0;
+  font-size: var(--t-sm);
+}
+
+.viewer-fm div {
+  display: flex;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--fill);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.viewer-fm dt {
+  color: var(--text-3);
+}
+
+.viewer-fm dd {
+  margin: 0;
+}
+
+.viewer-markdown > .prose,
+.viewer-word > .prose,
+.viewer-script > .script-page,
+.viewer-text {
+  justify-self: stretch;
+  max-width: none;
+  padding: clamp(28px, 5vw, 64px) clamp(22px, 6vw, 80px);
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+/* The words keep their measure, one column centred in the sheet. */
+.viewer-markdown > .prose,
+.viewer-word > .prose {
+  display: grid;
+  grid-template-columns: minmax(0, 42rem);
+  justify-content: center;
+}
+
+.viewer-script > .script-page {
+  width: auto;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: min(100%, 64ch);
+}
+
+.viewer-pdf {
+  width: 100%;
+  height: calc(100vh - 220px);
+  border: 0;
+  border-radius: var(--r-lg);
+  box-shadow: var(--hairline);
+  background: white;
+}
+
+.viewer-text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .notes-layout {
+    grid-template-columns: 1fr;
+  }
+  .notes-side {
+    position: static;
+  }
+  .link-add {
+    grid-template-columns: 1fr;
+  }
+  .link-add .link-note {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .link-add-row {
+    flex-direction: column;
+  }
+  .link-add-row .btn {
+    height: 44px;
+  }
+}
+
+/* A phone has no keyboard to hint at. */
+@media (max-width: 720px) {
+  .capture-keys {
+    visibility: hidden;
+  }
+}

@@ -1,0 +1,1848 @@
+
+/* ------------------------------------------------------------ panels & blocks */
+
+/* A card: the thing you act on next, and anything that groups. A translucent panel lit along its top. */
+.panel {
+  padding: 24px 26px 24px;
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  min-height: 24px;
+}
+
+.block-title {
+  font-size: var(--t-lg);
+  font-weight: 630;
+  color: var(--text);
+  letter-spacing: -0.024em;
+}
+
+.small {
+  font-size: var(--t-sm);
+}
+
+.delta {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------ next workout */
+
+.nw-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.nw-eyebrow {
+  color: color-mix(in oklab, var(--training) 60%, var(--text-2));
+  font-size: var(--t-sm);
+  font-weight: 560;
+}
+
+/* The next workout: lit from its corner in the training blue. */
+.panel.next-workout {
+  background:
+    radial-gradient(80% 70% at 100% 0%, color-mix(in oklab, var(--training) 13%, transparent), transparent 70%),
+    var(--panel);
+}
+
+.cycle {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cycle-step {
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.cycle-step.done {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--training) 70%, transparent), var(--training));
+  box-shadow: 0 0 8px color-mix(in oklab, var(--training) 60%, transparent);
+}
+
+.cycle-step.skipped {
+  background: repeating-linear-gradient(135deg, var(--training) 0 2px, transparent 2px 5px);
+  opacity: 0.6;
+}
+
+.cycle-step.next {
+  background: var(--text);
+  box-shadow: 0 0 10px rgb(255 255 255 / 0.5);
+}
+
+.nw-title {
+  margin: 8px 0 20px;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.034em;
+}
+
+.nw-list {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.nw-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) auto minmax(0, 1.2fr);
+  gap: 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.nw-name {
+  font-weight: 540;
+}
+
+.nw-sets {
+  font-size: var(--t-sm);
+}
+
+.nw-last {
+  text-align: right;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-variant-numeric: proportional-nums;
+}
+
+.nw-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nw-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: var(--t-xs);
+}
+
+.nw-hint svg {
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 560px) {
+  .nw-list li {
+    grid-template-columns: 1fr auto;
+    row-gap: 2px;
+  }
+  .nw-last {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+  .nw-hint {
+    margin-left: 0;
+  }
+}
+
+/* ------------------------------------------------------------ macro bars */
+
+.macro-bars {
+  display: grid;
+  gap: 14px;
+}
+
+.macro-row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.macro-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-weight: 520;
+}
+
+.macro-label .dot {
+  background: var(--c);
+  box-shadow: 0 0 6px color-mix(in oklab, var(--c) 70%, transparent);
+}
+
+/*
+ * A bar like an instrument's gauge: a recessed track in Macrau's track colour,
+ * the fill brightening toward its end, and a lit cap where it stops.
+ */
+.macro-track {
+  position: relative;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--track);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.45);
+  overflow: visible;
+}
+
+.macro-fill {
+  position: relative;
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--c) 55%, transparent), var(--c));
+  box-shadow: 0 0 12px -2px color-mix(in oklab, var(--c) 70%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.25);
+  transition: width 0.8s var(--ease);
+}
+
+.macro-fill::after {
+  content: '';
+  position: absolute;
+  right: 1px;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  translate: 0 -50%;
+  background: #fff;
+  box-shadow: 0 0 6px 1px color-mix(in oklab, var(--c) 40%, white);
+  opacity: 0.85;
+}
+
+.macro-fill[style*='width: 0%']::after {
+  display: none;
+}
+
+.macro-over {
+  position: absolute;
+  right: -6px;
+  top: -4px;
+  width: 4px;
+  height: 15px;
+  border-radius: 2px;
+  background: var(--over);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--over) 80%, transparent);
+}
+
+.macro-value {
+  min-width: 96px;
+  font-variant-numeric: proportional-nums;
+  text-align: right;
+  font-size: var(--t-sm);
+}
+
+.macro-value strong {
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-weight: 620;
+}
+
+/* ------------------------------------------------------------ page head extras */
+
+.loading {
+  min-height: 60vh;
+}
+
+/* ------------------------------------------------------------ stat row */
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-bottom: 48px;
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(60% 120% at 0% 0%, color-mix(in oklab, var(--area) 9%, transparent), transparent 70%),
+    var(--panel);
+  box-shadow: var(--hairline);
+  overflow: hidden;
+}
+
+.stat {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 20px 22px 22px;
+  box-shadow: -1px 0 0 var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.stat {
+  transition: background 0.12s;
+}
+
+a.stat:hover {
+  background: var(--wash);
+}
+
+.stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-weight: 520;
+}
+
+.stat-label .dot {
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* The figure: the widest, lightest cut, like an instrument's readout. */
+.stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 2.25rem;
+  font-weight: 320;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  font-variant-numeric: proportional-nums;
+}
+
+.stat-unit {
+  font-family: var(--sans);
+  font-stretch: 100%;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-3);
+}
+
+.stat-sub {
+  color: var(--text-3);
+  font-size: var(--t-sm);
+}
+
+/* Two by two on a phone, divided by hairlines. */
+@media (max-width: 860px) {
+  .stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stat {
+    padding: 14px 16px 16px;
+    box-shadow: -0.5px -0.5px 0 var(--line-strong);
+  }
+  .stat-value {
+    font-size: 1.625rem;
+  }
+}
+
+/* ------------------------------------------------------------ hero weight chart */
+
+.hero-chart,
+.two-up > section {
+  padding: 24px 26px 20px;
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+/* The weight chart is the centrepiece: lit in the weight violet from above. */
+.hero-chart {
+  padding: 28px 30px 22px;
+  background:
+    radial-gradient(70% 60% at 15% 0%, color-mix(in oklab, var(--weight) 14%, transparent), transparent 70%),
+    var(--panel);
+}
+
+.hero-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.hero-label {
+  font-size: var(--t-lg);
+  font-weight: 630;
+  letter-spacing: -0.024em;
+  color: var(--text);
+}
+
+.hero-value {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.hero-num {
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: clamp(3.5rem, 2.6rem + 2vw, 4.75rem);
+  font-weight: 230;
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+  font-variant-numeric: proportional-nums;
+  background: linear-gradient(180deg, #fff 30%, color-mix(in oklab, var(--weight) 55%, white));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-unit {
+  color: var(--text-3);
+  font-size: var(--t-md);
+  font-weight: 500;
+}
+
+.hero-sub {
+  margin-top: 14px;
+}
+
+.hero-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.legend-icon.training {
+  color: var(--training-text);
+}
+
+.gap-label {
+  fill: var(--text-3);
+  font-size: 11px;
+}
+
+.extreme-label {
+  fill: var(--text);
+  font-size: 11px;
+  font-weight: 620;
+  font-variant-numeric: proportional-nums;
+  paint-order: stroke;
+  stroke: var(--canvas);
+  stroke-width: 3px;
+}
+
+/* Health charts: quieter grid, dashed, so the data carries the light. */
+.chart-panel {
+  padding: 22px 24px 14px;
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.health-chart .grid line {
+  stroke: rgb(255 255 255 / 0.055);
+  stroke-dasharray: 2 4;
+}
+
+.health-chart .bar {
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--c) 35%, transparent));
+}
+
+.health-chart .target-tick {
+  filter: drop-shadow(0 0 3px rgb(255 255 255 / 0.6));
+}
+
+.health-chart .lift-line {
+  filter: drop-shadow(0 2px 6px color-mix(in oklab, var(--training) 70%, transparent));
+}
+
+/* ------------------------------------------------------------ two-up */
+
+.two-up {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1000px) {
+  .two-up {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------------------ protein days */
+
+.protein-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 400px;
+}
+
+.protein-dow {
+  text-align: center;
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.protein-cell {
+  aspect-ratio: 1;
+  border-radius: 9px;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s var(--spring);
+}
+
+.protein-cell:hover,
+.protein-cell:focus-visible {
+  transform: scale(1.12);
+}
+
+.protein-cell.hit,
+.swatch.hit {
+  background: linear-gradient(160deg, color-mix(in oklab, var(--protein) 70%, white), var(--protein) 55%);
+  box-shadow: 0 0 14px -2px color-mix(in oklab, var(--protein) 75%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.4);
+}
+
+.protein-cell.miss,
+.swatch.miss {
+  background: color-mix(in oklab, var(--protein) 8%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--protein) 55%, transparent);
+}
+
+.protein-cell.none,
+.swatch.none {
+  background: rgb(255 255 255 / 0.04);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.04);
+}
+
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.protein-readout {
+  margin-top: 14px;
+  min-height: 1.5em;
+  font-size: var(--t-sm);
+}
+
+/* ------------------------------------------------------------ lifts */
+
+.lift-grid,
+.records {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0;
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+  overflow: hidden;
+}
+
+/* Each lift sits in a faint pool of training blue, its line or latest point glowing. */
+.lift-card {
+  display: grid;
+  gap: 3px;
+  align-content: start;
+  min-height: 164px;
+  padding: 18px 20px 10px;
+  background:
+    radial-gradient(110% 70% at 50% 115%, color-mix(in oklab, var(--training) 19%, transparent), transparent 72%),
+    linear-gradient(180deg, color-mix(in oklab, var(--training) 5%, transparent), transparent 50%);
+  box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line);
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.lift-card:hover {
+  background:
+    radial-gradient(110% 80% at 50% 110%, color-mix(in oklab, var(--training) 24%, transparent), transparent 75%),
+    linear-gradient(180deg, color-mix(in oklab, var(--training) 8%, transparent), transparent 50%);
+}
+
+.lift-card .health-chart svg {
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--training) 70%, transparent));
+}
+
+.lift-card.untrained {
+  min-height: 0;
+  padding-bottom: 16px;
+}
+
+.lift-name {
+  color: color-mix(in oklab, var(--training) 30%, var(--text-2));
+  font-size: var(--t-sm);
+  font-weight: 540;
+}
+
+.lift-value {
+  margin-top: 4px;
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 1.875rem;
+  font-weight: 320;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.lift-value .faint {
+  font-family: var(--sans);
+  font-stretch: 100%;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.lift-delta {
+  font-size: var(--t-xs);
+}
+
+.training-top {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(280px, 5fr);
+  gap: 36px;
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .training-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+.program-list {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * The program as one panel: days done this cycle lit in training blue from
+ * the left, the next day raised like a lit key, the rest waiting.
+ */
+.program-list.panel-list {
+  display: grid;
+  gap: 2px;
+  padding: 6px;
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(90% 50% at 0% 0%, color-mix(in oklab, var(--training) 14%, transparent), transparent 70%),
+    var(--panel);
+  box-shadow: var(--hairline);
+}
+
+.program-day {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-list .program-day {
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.panel-list .program-day.done {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--training) 16%, transparent), color-mix(in oklab, var(--training) 3%, transparent) 70%);
+}
+
+.panel-list .program-day.next {
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.09), rgb(255 255 255 / 0.03));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.1), 0 10px 24px -14px rgb(0 0 0 / 0.8);
+}
+
+.panel-list .program-day.skipped {
+  opacity: 0.55;
+}
+
+.program-day-text {
+  display: grid;
+  gap: 2px;
+}
+
+.program-day-text .faint {
+  font-size: var(--t-sm);
+  line-height: 1.4;
+}
+
+.day-num {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.05);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  color: var(--text-2);
+  font-size: var(--t-xs);
+  font-weight: 640;
+}
+
+.program-day.done .day-num {
+  background: linear-gradient(160deg, color-mix(in oklab, var(--training) 70%, white), var(--training) 60%);
+  box-shadow: 0 0 12px -2px color-mix(in oklab, var(--training) 80%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.35);
+  color: #fff;
+}
+
+.program-day.next .day-num {
+  background: linear-gradient(180deg, #fff, #d9dbe2);
+  box-shadow: 0 0 14px -2px rgb(255 255 255 / 0.5);
+  color: var(--bg);
+}
+
+.program-day.skipped .day-num {
+  text-decoration: line-through;
+}
+
+.program-state {
+  color: var(--text-3);
+  font-size: var(--t-xs);
+  font-weight: 600;
+}
+
+.program-day.done .program-state {
+  color: color-mix(in oklab, var(--training) 70%, white);
+}
+
+.program-day.next .program-state {
+  color: var(--text);
+}
+
+.workout-list,
+.session-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.workout-row,
+.session-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.workout-row:hover,
+.session-row:hover {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--training) 9%, transparent), transparent 70%);
+}
+
+.workout-name {
+  font-weight: 560;
+}
+
+.session-sets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.set-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.05);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-2);
+  font-size: var(--t-sm);
+}
+
+.set-pill.best {
+  background: color-mix(in oklab, var(--training) 20%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--training) 45%, transparent), 0 0 12px -4px var(--training);
+  color: var(--text);
+}
+
+.pr-icon {
+  width: 13px;
+  height: 13px;
+  color: var(--fat);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-2);
+  text-decoration: none;
+  margin-bottom: 18px;
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.back-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lift-head {
+  margin-bottom: 28px;
+}
+
+.lift-title {
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+}
+
+.records {
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.record {
+  display: grid;
+  gap: 2px;
+  padding: 16px 18px;
+  box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line);
+}
+
+.record-reps {
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 1.75rem;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+/* ------------------------------------------------------------ photos */
+
+.photo-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 360px));
+  gap: 20px;
+}
+
+.photo-pair figure {
+  margin: 0;
+}
+
+.photo-pair figcaption {
+  margin-top: 10px;
+}
+
+.photo-pair figcaption strong {
+  font-weight: 600;
+}
+
+.photo-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 24px 50px -24px rgb(0 0 0 / 0.9);
+  cursor: pointer;
+  transition: transform 0.35s var(--spring), box-shadow 0.3s;
+}
+
+.photo-btn img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease);
+}
+
+.photo-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12), 0 30px 60px -24px rgb(0 0 0 / 0.95);
+}
+
+.photo-btn:hover img {
+  transform: scale(1.03);
+}
+
+.photo-slot {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  aspect-ratio: 3 / 4;
+  padding: 32px;
+  border: 0;
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(80% 55% at 50% 38%, color-mix(in oklab, var(--area) 26%, transparent), transparent 75%),
+    radial-gradient(90% 60% at 50% 110%, color-mix(in oklab, var(--area-2, var(--weight)) 20%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in oklab, var(--area) 8%, rgb(255 255 255 / 0.03)), rgb(255 255 255 / 0.015));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--area) 24%, rgb(255 255 255 / 0.05)), inset 0 1px 0 rgb(255 255 255 / 0.08);
+  outline: 1px dashed color-mix(in oklab, var(--area) 35%, rgb(255 255 255 / 0.08));
+  outline-offset: -10px;
+  color: var(--text-2);
+  text-align: center;
+  text-wrap: balance;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.photo-slot:hover {
+  background:
+    radial-gradient(80% 55% at 50% 38%, color-mix(in oklab, var(--area) 36%, transparent), transparent 75%),
+    radial-gradient(90% 60% at 50% 110%, color-mix(in oklab, var(--area-2, var(--weight)) 28%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in oklab, var(--area) 12%, rgb(255 255 255 / 0.04)), rgb(255 255 255 / 0.02));
+}
+
+.photo-slot svg {
+  box-sizing: content-box;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 6px;
+  padding: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, color-mix(in oklab, var(--area) 40%, transparent), color-mix(in oklab, var(--area) 12%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--area) 40%, transparent), 0 14px 30px -10px color-mix(in oklab, var(--area) 70%, transparent);
+  color: color-mix(in oklab, var(--area) 45%, white);
+}
+
+.photo-slot strong {
+  color: var(--text);
+}
+
+.empty-btn {
+  width: 100%;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.empty-btn:hover {
+  background: var(--wash);
+}
+
+.thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.thumb {
+  flex: none;
+  width: 84px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font-size: var(--t-xs);
+  cursor: pointer;
+}
+
+.thumb img {
+  display: block;
+  width: 84px;
+  height: 112px;
+  object-fit: cover;
+  border-radius: var(--r-md);
+  margin-bottom: 6px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 10px 20px -10px rgb(0 0 0 / 0.8);
+  transition: transform 0.3s var(--spring);
+}
+
+.thumb:hover img {
+  transform: translateY(-2px);
+}
+
+.inline-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inline-select .input {
+  height: 30px;
+  width: auto;
+  padding: 0 8px;
+  font-size: var(--t-sm);
+}
+
+.show-more {
+  margin-top: 12px;
+}
+
+@media (max-width: 560px) {
+  .photo-pair {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+
+/* ------------------------------------------------------------ tables */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.over-text {
+  color: color-mix(in oklab, var(--over) 85%, white);
+  font-weight: 600;
+}
+
+.under-text {
+  color: color-mix(in oklab, var(--calories) 80%, white);
+  font-weight: 560;
+}
+
+/*
+ * Every day logged: each row edged and washed from the left in calorie green
+ * when under target or orange when over, and each figure in its macro's colour.
+ */
+.day-table tbody tr.day-under {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--calories) 10%, transparent), transparent 45%);
+}
+
+.day-table tbody tr.day-over {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--over) 11%, transparent), transparent 45%);
+}
+
+.day-table tbody tr.day-under td:first-child {
+  box-shadow: inset 3px 0 0 var(--calories), inset 0 -0.5px 0 var(--line);
+}
+
+.day-table tbody tr.day-over td:first-child {
+  box-shadow: inset 3px 0 0 var(--over), inset 0 -0.5px 0 var(--line);
+}
+
+.day-table tbody tr:last-child.day-under td:first-child {
+  box-shadow: inset 3px 0 0 var(--calories);
+}
+
+.day-table tbody tr:last-child.day-over td:first-child {
+  box-shadow: inset 3px 0 0 var(--over);
+}
+
+.day-table tbody tr.day-under:hover {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--calories) 18%, transparent), var(--wash-strong) 55%);
+}
+
+.day-table tbody tr.day-over:hover {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--over) 18%, transparent), var(--wash-strong) 55%);
+}
+
+.day-eaten {
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-weight: 620;
+}
+
+.day-protein {
+  color: color-mix(in oklab, var(--protein) 45%, var(--text-2));
+}
+
+.day-protein.is-hit {
+  color: color-mix(in oklab, var(--protein) 75%, white);
+  font-weight: 600;
+}
+
+.day-carbs {
+  color: color-mix(in oklab, var(--carbs-text) 70%, var(--text-2));
+}
+
+.day-fat {
+  color: color-mix(in oklab, var(--fat) 65%, var(--text-2));
+}
+
+.day-weight {
+  color: color-mix(in oklab, var(--weight) 75%, white);
+}
+
+.weigh-trend {
+  color: color-mix(in oklab, var(--weight) 45%, var(--text-2));
+}
+
+/* A column's key: a small dot of the colour its figures are set in. */
+.th-key {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: 1px;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.hit-check {
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  vertical-align: -2px;
+  color: var(--protein);
+  filter: drop-shadow(0 0 4px color-mix(in oklab, var(--protein) 70%, transparent));
+}
+
+.hit-check-space {
+  display: inline-block;
+  width: 20px;
+}
+
+/* ------------------------------------------------------------ calendar */
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.cal-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.034em;
+  min-width: 250px;
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-summary {
+  margin-left: auto;
+}
+
+.cal-legend {
+  margin-bottom: 18px;
+}
+
+.ring {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--protein);
+}
+
+/*
+ * The month: one panel, days divided by hairlines. Each day carries its own
+ * light: a logged day glows from its foot in calorie green (under target) or
+ * orange (over), a trained day is lit from the top in training blue, and a
+ * protein day has a cyan line along its foot.
+ */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(70% 40% at 0% 0%, color-mix(in oklab, var(--area) 10%, transparent), transparent 70%),
+    var(--panel);
+  box-shadow: var(--hairline);
+  overflow: hidden;
+}
+
+.cal-dow {
+  padding: 12px 12px 10px;
+  color: var(--text-3);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+
+.cal-cell {
+  --food: transparent;
+  --train: transparent;
+  --day-base: transparent;
+  --today-glow: transparent;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 118px;
+  padding: 5px;
+  background:
+    radial-gradient(100% 60% at 50% 0%, var(--today-glow), transparent 75%),
+    linear-gradient(0deg, color-mix(in oklab, var(--food) 20%, transparent), color-mix(in oklab, var(--food) 6%, transparent) 40%, transparent 75%),
+    linear-gradient(180deg, color-mix(in oklab, var(--train) 20%, transparent), color-mix(in oklab, var(--train) 6%, transparent) 40%, transparent 75%),
+    var(--day-base);
+  box-shadow: inset 1px 0 0 var(--line), inset 0 -1px 0 var(--line);
+  transition: background 0.2s;
+}
+
+.cal-cell:nth-child(7n + 1) {
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+
+.cal-cell:nth-child(7n + 6),
+.cal-cell:nth-child(7n) {
+  --day-base: rgb(0 0 0 / 0.1);
+}
+
+.cal-cell.fed-under {
+  --food: var(--calories);
+}
+
+.cal-cell.fed-over {
+  --food: var(--over);
+}
+
+.cal-cell.trained {
+  --train: var(--training);
+}
+
+.cal-cell.protein-hit::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--protein);
+  box-shadow: 0 0 10px 1px color-mix(in oklab, var(--protein) 70%, transparent);
+  pointer-events: none;
+}
+
+.cal-cell.outside {
+  opacity: 0.32;
+}
+
+.cal-cell.future .cal-num {
+  color: var(--text-3);
+}
+
+.cal-day {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: start;
+  gap: 4px 6px;
+  flex: 1;
+  width: 100%;
+  padding: 6px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.cal-day:hover:not(:disabled) {
+  background: var(--wash-strong);
+}
+
+.cal-day:disabled {
+  cursor: default;
+}
+
+.cal-num {
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: var(--t-base);
+  font-weight: 560;
+  color: var(--text-2);
+}
+
+.cal-cell.is-today {
+  --today-glow: color-mix(in oklab, var(--area) 18%, transparent);
+}
+
+.cal-cell.is-today .cal-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  margin: -4px 0 0 -5px;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #fff, #d9dbe2);
+  box-shadow: 0 0 14px -2px rgb(255 255 255 / 0.45);
+  color: var(--bg);
+}
+
+.cal-marks {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.cal-food {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 1px color-mix(in oklab, var(--food) 70%, transparent);
+}
+
+.cal-food.hit {
+  box-shadow: 0 0 0 2px var(--canvas), 0 0 0 3.5px var(--protein), 0 0 10px 2px color-mix(in oklab, var(--protein) 40%, transparent);
+}
+
+.cal-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--text-2);
+}
+
+.cal-weight {
+  grid-column: 1 / -1;
+  align-self: end;
+  color: color-mix(in oklab, var(--weight) 80%, white);
+  font-size: var(--t-xs);
+  font-weight: 620;
+}
+
+.cal-workout {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 5px 7px;
+  border: 0;
+  border-radius: 7px;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--training) 26%, transparent), color-mix(in oklab, var(--training) 10%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--training) 30%, transparent);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 560;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.15s;
+}
+
+.cal-workout:hover {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--training) 38%, transparent), color-mix(in oklab, var(--training) 18%, transparent));
+}
+
+.cal-workout svg {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  color: var(--training-text);
+}
+
+.cal-workout span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 720px) {
+  .cal-cell {
+    min-height: 64px;
+  }
+  .cal-workout span {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------ editors */
+
+.fieldset {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.fieldset legend {
+  margin-bottom: 10px;
+  padding: 0;
+  font-weight: 600;
+}
+
+.macro-fields {
+  display: grid;
+  grid-template-columns: 10px 1fr 1fr;
+  align-items: end;
+  gap: 12px 12px;
+}
+
+.macro-fields > .dot {
+  margin-bottom: 15px;
+}
+
+.source-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border: 0;
+  box-shadow: var(--edge);
+  background: rgb(255 255 255 / 0.025);
+  border-radius: var(--r-lg);
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.source-link:hover {
+  background: var(--wash);
+}
+
+.source-link img {
+  width: 44px;
+  height: 60px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 6px;
+}
+
+.source-link > span {
+  display: grid;
+  gap: 2px;
+  font-size: var(--t-sm);
+}
+
+.entries {
+  display: grid;
+  gap: 14px;
+}
+
+.entry {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  box-shadow: var(--edge);
+  border-radius: var(--r-lg);
+  background: rgb(0 0 0 / 0.18);
+}
+
+.entry-head strong {
+  font-weight: 600;
+}
+
+.entry-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.entry-head .faint {
+  flex: 1;
+  font-size: var(--t-xs);
+}
+
+.entry .btn-sm {
+  justify-self: start;
+}
+
+.set-grid {
+  display: grid;
+  grid-template-columns: 32px 1fr 1fr 32px;
+  gap: 6px 8px;
+  align-items: center;
+  font-size: var(--t-xs);
+}
+
+.set-n {
+  color: var(--text-3);
+  text-align: center;
+}
+
+.set-input {
+  height: 34px;
+}
+
+.set-input::placeholder {
+  color: var(--text-3);
+  opacity: 0.8;
+}
+
+.program-edit-day {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.program-edit-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.program-edit-head .input {
+  flex: 1;
+  font-weight: 600;
+}
+
+.program-edit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+.program-edit-list li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 34px;
+}
+
+.program-edit-list .grow {
+  flex: 1;
+}
+
+.sets-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 6px;
+  font-size: var(--t-xs);
+}
+
+.sets-input .input {
+  width: 52px;
+  height: 30px;
+  padding: 0 8px;
+}
+
+.rot90 {
+  rotate: 90deg;
+}
+
+.photo-preview {
+  width: 100%;
+  max-height: 52vh;
+  object-fit: contain;
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+
+.drop {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  padding: 52px 24px;
+  border: 1px dashed rgb(255 255 255 / 0.16);
+  border-radius: var(--r-lg);
+  background: radial-gradient(60% 60% at 50% 30%, color-mix(in oklab, var(--area) 10%, transparent), transparent 75%);
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.drop:hover {
+  border-color: rgb(255 255 255 / 0.28);
+  background: radial-gradient(60% 60% at 50% 30%, color-mix(in oklab, var(--area) 18%, transparent), transparent 75%);
+}
+
+.toast-action {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--wash-strong);
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.toast-action:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+/* ------------------------------------------------------------ lifts not yet trained */
+
+.untrained-line {
+  margin-top: 16px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  line-height: 1.7;
+}
+
+.untrained-line a {
+  color: var(--text-2);
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+
+.untrained-line a:hover {
+  color: var(--text);
+}
+
+
+/* ------------------------------------------------------------ health overview, top */
+
+/* The latest day leads, as Macrau shows it; training sits beside it. */
+.health-top {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 1000px) {
+  .health-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+.health-day,
+.health-next {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 26px 0;
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+/* The latest day, lit in Macrau's calorie green behind the ring. */
+.health-day {
+  background:
+    radial-gradient(42% 70% at 16% 50%, color-mix(in oklab, var(--calories) 13%, transparent), transparent 70%),
+    var(--panel);
+}
+
+.health-next {
+  background:
+    radial-gradient(80% 60% at 100% 0%, color-mix(in oklab, var(--training) 15%, transparent), transparent 70%),
+    var(--panel);
+}
+
+.health-day.empty-btn {
+  padding-bottom: 22px;
+}
+
+.health-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.health-panel-head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--t-md);
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+
+.health-panel-head h2 svg {
+  width: 15px;
+  height: 15px;
+  color: color-mix(in oklab, var(--training) 80%, white);
+  stroke-width: 2.1;
+}
+
+.health-day-body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+  padding: 20px 0 26px;
+}
+
+@media (max-width: 560px) {
+  .health-day-body {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .health-day-macros {
+    width: 100%;
+  }
+}
+
+.cal-ring {
+  position: relative;
+  width: 184px;
+  height: 184px;
+}
+
+.cal-ring svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.cal-ring-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.cal-ring-text strong {
+  font-stretch: var(--widest);
+  font-size: 2.125rem;
+  font-weight: 320;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.cal-ring-text span {
+  margin-top: 2px;
+  color: var(--text-3);
+  font-size: var(--t-sm);
+}
+
+.health-day-macros {
+  display: grid;
+  gap: 18px;
+}
+
+.health-day-below {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+}
+
+.health-day-below strong {
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 1.625rem;
+  font-weight: 340;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  color: color-mix(in oklab, var(--calories) 55%, white);
+}
+
+.health-day-below.is-over strong {
+  color: color-mix(in oklab, var(--over) 60%, white);
+}
+
+.health-day .macro-track {
+  height: 9px;
+  border-radius: 5px;
+}
+
+/* A quiet footer of facts across the bottom of each panel. */
+.health-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: auto -26px 0;
+  background: rgb(0 0 0 / 0.12);
+  border-radius: 0 0 var(--r-xl) var(--r-xl);
+  box-shadow: inset 0 1px 0 var(--line);
+}
+
+.health-facts > div {
+  padding: 14px 26px 16px;
+}
+
+.health-facts > div + div {
+  box-shadow: inset 1px 0 0 var(--line);
+}
+
+.health-facts dt {
+  color: var(--text-3);
+  font-size: var(--t-xs);
+}
+
+.health-facts dd {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+}
+
+.health-facts dd .num {
+  color: var(--text);
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-weight: 620;
+}
+
+.health-next-day {
+  margin-top: 20px;
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 3rem;
+  font-weight: 280;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.health-next-day .faint {
+  font-family: var(--sans);
+  font-stretch: 100%;
+  font-size: var(--t-lg);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.health-next-name {
+  margin: 10px 0 18px;
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: var(--t-md);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.health-next .cycle {
+  gap: 5px;
+}
+
+.health-next .cycle-step {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+}
+
+.health-next-list {
+  margin-top: 14px;
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+
+.health-next-log {
+  align-self: flex-start;
+  margin: 20px 0 24px;
+}

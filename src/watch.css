@@ -1,0 +1,419 @@
+/* ------------------------------------------------------------ watchlist */
+
+.watch-note {
+  margin: -18px 0 22px;
+  max-width: 80ch;
+}
+
+.watch-note code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--wash-strong);
+  font-size: 0.9em;
+}
+
+.watch-services {
+  margin: -10px 0 22px;
+}
+
+/* ------------------------------------------------------------ feature */
+
+/*
+ * The next title, large. Its poster is blurred to fill the panel, so each
+ * title brings its own light; the text sits on a darkening wash from the left.
+ */
+.feature {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 44px;
+  align-items: center;
+  margin-bottom: 52px;
+  padding: 40px;
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  box-shadow: var(--hairline), 0 40px 80px -40px rgb(0 0 0 / 0.9);
+  overflow: hidden;
+}
+
+.feature-backdrop {
+  position: absolute;
+  inset: -80px;
+  z-index: -2;
+  width: calc(100% + 160px);
+  height: calc(100% + 160px);
+  object-fit: cover;
+  filter: blur(70px) saturate(1.5) brightness(0.6);
+  transform: scale(1.1);
+}
+
+/* A wash darkening to the right, and a fine grain so the blur reads as light. */
+.feature::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    var(--grain),
+    linear-gradient(90deg, rgb(15 16 19 / 0.1) 0%, rgb(15 16 19 / 0.5) 40%, rgb(15 16 19 / 0.82) 100%),
+    linear-gradient(180deg, transparent 50%, rgb(15 16 19 / 0.4));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  border-radius: inherit;
+}
+
+.feature-poster {
+  display: block;
+  border-radius: 12px;
+}
+
+.feature-poster .poster.big {
+  width: 100%;
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14), 0 40px 70px -24px rgb(0 0 0 / 0.95), 0 10px 20px -10px rgb(0 0 0 / 0.6);
+}
+
+.feature-poster:hover .poster.big {
+  transform: scale(1.025) rotate(-0.6deg);
+}
+
+.feature-body {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  max-width: 62ch;
+}
+
+.feature-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(255 255 255 / 0.7);
+  font-size: var(--t-sm);
+  font-weight: 560;
+}
+
+.feature-title {
+  font-size: clamp(2rem, 1.2rem + 2.4vw, 3.5rem);
+  font-weight: 620;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.feature-facts {
+  color: rgb(255 255 255 / 0.72);
+  font-size: var(--t-base);
+}
+
+.feature-overview {
+  margin-top: 4px;
+  color: rgb(255 255 255 / 0.84);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.feature .scores {
+  margin-top: 2px;
+}
+
+.feature-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.feature-actions .btn {
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 10px;
+}
+
+.feature-actions .btn:not(.btn-primary) {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(12px);
+}
+
+.feature-actions .btn:not(.btn-primary):hover {
+  background: rgb(255 255 255 / 0.16);
+}
+
+.feature-on {
+  margin-left: 6px;
+  color: rgb(255 255 255 / 0.7);
+  font-size: var(--t-sm);
+}
+
+.watch-h {
+  margin: 0 2px 18px;
+  font-size: var(--t-lg);
+  font-weight: 620;
+  letter-spacing: -0.024em;
+}
+
+@media (max-width: 720px) {
+  .feature {
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 18px;
+    padding: 18px;
+  }
+  .feature-overview {
+    display: none;
+  }
+}
+
+.posters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(164px, 1fr));
+  gap: 32px 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.poster-card {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--raised);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 22px 44px -22px rgb(0 0 0 / 0.95);
+  margin-bottom: 10px;
+  transition: transform 0.45s var(--spring), box-shadow 0.3s;
+}
+
+.poster-card:hover .poster {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.16), 0 34px 60px -24px rgb(0 0 0 / 1), 0 0 40px -18px color-mix(in oklab, var(--area) 70%, transparent);
+}
+
+.poster-blank {
+  --card-hue: 250;
+  position: relative;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  padding: 18px 14px;
+  background:
+    radial-gradient(120% 70% at 50% 0%, oklch(0.42 0.09 var(--card-hue) / 0.55), transparent 70%),
+    linear-gradient(170deg, oklch(0.26 0.05 var(--card-hue)), oklch(0.15 0.03 var(--card-hue)));
+  color: oklch(0.93 0.03 var(--card-hue));
+  text-align: center;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* A thin inner frame, like a title card on screen. */
+.poster-blank::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid oklch(0.93 0.03 var(--card-hue) / 0.18);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.poster-card-title {
+  font-weight: 600;
+  font-size: var(--t-lg);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.poster-card-year {
+  font-size: var(--t-xs);
+  opacity: 0.7;
+}
+
+.tmdb-hit .poster-card-title {
+  font-size: 7px;
+}
+
+.tmdb-hit .poster-card-year {
+  display: none;
+}
+
+.poster.big {
+  width: 150px;
+  flex: none;
+}
+
+.poster-title {
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-weight: 600;
+  letter-spacing: -0.016em;
+  line-height: 1.3;
+}
+
+.poster-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poster-on {
+  color: var(--text-2);
+}
+
+.stars {
+  display: inline-flex;
+  gap: 1px;
+  color: var(--fat);
+}
+
+.stars svg {
+  width: 12px;
+  height: 12px;
+}
+
+.tmdb-hits {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tmdb-hit {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 12px;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.tmdb-hit:hover {
+  background: var(--wash);
+}
+
+.tmdb-hit .poster {
+  margin: 0;
+  font-size: 8px;
+  padding: 4px;
+}
+
+.tmdb-overview {
+  display: -webkit-box;
+  margin-top: 2px;
+  color: var(--text-2);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.watch-manual {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.watch-item {
+  display: grid;
+  gap: 22px;
+}
+
+.watch-top {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.watch-side {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.watch-side .segmented {
+  justify-self: start;
+}
+
+.rating {
+  display: flex;
+  gap: 2px;
+}
+
+.rating button {
+  padding: 2px;
+  border: 0;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+}
+
+.rating button.on {
+  color: var(--fat);
+}
+
+.rating svg {
+  width: 24px;
+  height: 24px;
+}
+
+.providers {
+  display: grid;
+  gap: 2px;
+}
+
+.watch-overview {
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.comps {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.comps legend {
+  margin-bottom: 8px;
+}
+
+/* Critics' scores: IMDb, the Tomatometer, Metacritic. Quiet ink; only a rotten score dims. */
+.scores { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--text-2); }
+.scores .score-src { color: var(--text-3); }
+.scores .score.rotten .num { color: var(--text-3); }
+.scores.long { gap: 6px 16px; align-items: baseline; }
+
+/* On Watched, the one line you wrote, under the poster. */
+.poster-note {
+  margin-top: 2px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

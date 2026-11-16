@@ -1,0 +1,410 @@
+/* ------------------------------------------------------------ money */
+
+.fy-pick {
+  width: auto !important;
+  height: 36px;
+  padding-right: 32px !important;
+}
+
+.money-table td.strong {
+  font-weight: 600;
+}
+
+.money-table tr.late td:first-child {
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+
+.money-table .bad {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.money-overview {
+  display: grid;
+  gap: 28px;
+  padding-top: 4px;
+}
+
+/* What's owed leads, large, with each invoice under it; the year's totals sit to the side. */
+.money-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .money-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*
+ * The hero: what's owed to you, its figure set widest and lightest, lit in
+ * green from the corner the way Today's clock is lit by the hour.
+ */
+.owed {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  padding: 28px 32px 16px;
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(70% 100% at 0% 0%, color-mix(in oklab, var(--green) 26%, transparent), transparent 65%),
+    radial-gradient(60% 80% at 100% 100%, color-mix(in oklab, #14b8a6 16%, transparent), transparent 70%),
+    var(--panel);
+  box-shadow: var(--hairline), inset 0 1px 0 color-mix(in oklab, var(--green) 30%, transparent);
+  overflow: hidden;
+}
+
+/*
+ * Nothing owed: the hero stays, a settled reading rather than a blank. The
+ * figure is quieter, set at the narrower wide cut so its nought stays an oval,
+ * and a green tick says it's clear.
+ */
+.owed.is-clear {
+  min-height: 0;
+  justify-content: center;
+}
+
+.owed.is-clear .owed-big {
+  font-stretch: var(--wide);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--green) 30%, white), rgb(255 255 255 / 0.4));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.owed.is-clear .owed-sub {
+  margin-top: 0;
+}
+
+.owed-sub svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  padding: 4px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--green) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--green) 40%, transparent), 0 0 14px -2px color-mix(in oklab, var(--green) 60%, transparent);
+  color: color-mix(in oklab, var(--green) 70%, white);
+  stroke-width: 3;
+}
+
+.owed-label {
+  color: color-mix(in oklab, var(--green) 45%, var(--text-2));
+  font-family: var(--sans);
+  font-stretch: 100%;
+  font-size: var(--t-base);
+  font-weight: 560;
+  letter-spacing: 0;
+}
+
+.owed-big {
+  display: flex;
+  align-items: baseline;
+  margin-top: 18px;
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: clamp(4rem, 2.6rem + 4vw, 7rem);
+  font-weight: 240;
+  letter-spacing: -0.055em;
+  line-height: 0.9;
+  background: linear-gradient(180deg, #fff 25%, rgb(255 255 255 / 0.55));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The currency raised and the cents on the line, both small: the whole dollars carry the figure. */
+.owed-cur,
+.owed-cents {
+  font-size: 0.36em;
+  font-weight: 340;
+  letter-spacing: -0.02em;
+  -webkit-text-fill-color: var(--text-3);
+}
+
+.owed-cur {
+  align-self: flex-start;
+  margin: 0.2em 0.1em 0 0;
+}
+
+.owed-cents {
+  margin-left: 0.06em;
+}
+
+.owed-sub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 22px;
+  color: var(--text-2);
+  font-size: var(--t-md);
+}
+
+.owed-list {
+  display: grid;
+  margin: 22px -14px 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.owed-list > li + li .owed-row {
+  box-shadow: inset 0 1px 0 var(--line);
+}
+
+.owed-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 140px;
+  align-items: center;
+  gap: 16px;
+  min-height: 58px;
+  padding: 8px 14px;
+  border-radius: var(--r-md);
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.owed-row:hover {
+  background: var(--wash-strong);
+  box-shadow: none !important;
+}
+
+.owed-who {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.owed-who strong {
+  font-weight: 600;
+}
+
+.owed-who .faint {
+  font-size: var(--t-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.owed-when {
+  color: var(--text-2);
+  font-size: var(--t-sm);
+}
+
+.owed-row.late .owed-when {
+  color: var(--red);
+  font-weight: 560;
+}
+
+.owed-amount {
+  font-family: var(--display);
+  font-stretch: var(--wide);
+  font-size: var(--t-md);
+  font-weight: 560;
+  text-align: right;
+}
+
+/* On a phone the due date drops under the payer, and the amount keeps the right edge. */
+@media (max-width: 720px) {
+  .owed {
+    min-height: 0;
+    padding: 22px 20px 12px;
+  }
+  .owed-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'who amount' 'when amount';
+    gap: 2px 12px;
+  }
+  .owed-who {
+    grid-area: who;
+  }
+  .owed-when {
+    grid-area: when;
+  }
+  .owed-amount {
+    grid-area: amount;
+  }
+}
+
+/* The year's totals: three readings stacked in one panel. */
+.money-facts {
+  display: grid;
+  margin: 0;
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  box-shadow: var(--hairline);
+}
+
+/* Each reading is lit from its left edge in what it counts: received green, spent periwinkle, US tax amber. */
+.money-facts {
+  overflow: hidden;
+}
+
+.money-facts > div {
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  padding: 18px 22px;
+  background: radial-gradient(90% 120% at 0% 50%, color-mix(in oklab, var(--hue, transparent) 14%, transparent), transparent 75%);
+}
+
+.money-facts > div + div {
+  box-shadow: inset 0 1px 0 var(--line);
+}
+
+.money-facts dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  font-weight: 520;
+}
+
+.money-facts dt::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--hue, var(--text-3));
+  box-shadow: 0 0 8px var(--hue, transparent);
+}
+
+.money-facts dd {
+  margin: 0;
+}
+
+.money-facts dd.num {
+  margin-top: 2px;
+  font-family: var(--display);
+  font-stretch: var(--widest);
+  font-size: 1.75rem;
+  font-weight: 320;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  color: color-mix(in oklab, var(--hue, white) 35%, white);
+}
+
+.money-facts dd.faint {
+  font-size: var(--t-xs);
+}
+
+.money-year {
+  position: relative;
+  padding: 24px 28px 18px;
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(50% 220px at 0% 0%, color-mix(in oklab, var(--green) 12%, transparent), transparent 80%),
+    radial-gradient(45% 220px at 100% 0%, color-mix(in oklab, #6f7ff5 10%, transparent), transparent 80%),
+    var(--panel);
+  box-shadow: var(--hairline);
+}
+
+/* An empty year: the chart's frame stays, and one line over it says why it's bare. */
+.money-year.is-empty .money-chart {
+  opacity: 0.55;
+}
+
+.money-year-empty {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  translate: -50% -50%;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 10px 30px -12px rgb(0 0 0 / 0.8);
+  color: var(--text-2);
+  font-size: var(--t-sm);
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .money-year {
+    padding: 20px 16px 14px;
+  }
+  .money-year-empty {
+    white-space: normal;
+    width: max-content;
+    max-width: 80%;
+    text-align: center;
+    border-radius: var(--r-lg);
+  }
+}
+
+.axis-now {
+  fill: var(--text) !important;
+  font-weight: 600;
+}
+
+/* The accountant's export: a folder tile, what it makes, and the one button. */
+.export-box {
+  display: flex;
+  align-items: center;
+  gap: 18px 20px;
+  flex-wrap: wrap;
+  padding: 22px 24px;
+  border-radius: var(--r-xl);
+  box-shadow: var(--hairline);
+  background: var(--panel);
+}
+
+.export-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 13px;
+  background:
+    radial-gradient(100% 100% at 30% 0%, color-mix(in oklab, var(--green) 40%, transparent), transparent 75%),
+    color-mix(in oklab, var(--green) 12%, #1c1d22);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--green) 30%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.12);
+  color: color-mix(in oklab, var(--green) 70%, white);
+}
+
+.export-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.export-text {
+  flex: 1;
+  min-width: 240px;
+}
+
+.export-box h2 {
+  font-size: var(--t-md);
+  margin-bottom: 4px;
+}
+
+.export-box p {
+  max-width: 70ch;
+  line-height: 1.55;
+}
+
+.vault {
+  display: grid;
+  gap: 32px;
+  max-width: 900px;
+}
+
+.vault .block-title {
+  margin-bottom: 8px;
+}
+
+/* On a phone the tables keep their columns and scroll sideways. */
+@media (max-width: 720px) {
+  .money-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
