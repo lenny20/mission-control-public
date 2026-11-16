@@ -219,7 +219,7 @@ function Week({ cal, error, today, now }: { cal: CalendarRange | null; error: st
         <p className="week-note">The calendar couldn't load: {error}</p>
       ) : cal && !cal.status.connected ? (
         <p className="week-note">
-          Google Calendar isn't connected, so only events added here show.{' '}
+          No calendar account is connected, so only events added here show.{' '}
           <a className="link-btn" href={href({ area: 'calendar', view: 'week' })}>
             Connect it
           </a>

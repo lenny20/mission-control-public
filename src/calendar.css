@@ -1576,3 +1576,11 @@
   padding: 14px;
   font-size: var(--t-sm);
 }
+
+/* Separate connection state from the list of calendars it supplies. */
+.calendar-connections { display: grid; gap: 12px; width: 100%; }
+.calendar-connections .section-head { gap: 8px; margin: 0; }
+.calendar-connections h3 { font-size: var(--t-base); }
+.calendar-account { display: grid; gap: 4px; padding: 10px 0; border-top: 1px solid var(--hairline); overflow-wrap: anywhere; }
+.calendar-account p { margin: 0; }
+.calendar-account-actions { display: flex; gap: 14px; }

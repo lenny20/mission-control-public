@@ -89,13 +89,14 @@ export async function calMutate<T>(fn: () => Promise<T>): Promise<T> {
   return out;
 }
 
-/** Ask the server to pull from Google; it skips if it pulled in the last 30 seconds. */
+/** Ask the server to pull connected calendars; it skips if it pulled in the last 30 seconds. */
 export function requestSync(force = false) {
   return api
     .post<CalendarStatus>(`/api/calendar/sync${force ? '?force=1' : ''}`)
     .then((s) => {
       latestStatus = s;
       emit();
+      void refreshCalendar();
       return s;
     })
     .catch((err: Error) => {

@@ -1,3 +1,5 @@
+import { addConnection } from './calendar/connections.ts';
+import { microsoftAuthUrl, finishMicrosoftLogin } from './calendar/microsoft.ts';
 import { getProfile, saveProfile, doctor } from './profile.ts';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
@@ -171,6 +173,35 @@ app.put('/api/calendar/calendars/:id', async (c) => {
   calendar.showCalendar(decodeURIComponent(c.req.param('id')), shown);
   await calendar.sync().catch(() => 0);
   return c.json(calendar.status());
+});
+
+app.post('/api/calendar/connections', async (c) => {
+  const added = addConnection(await c.req.json());
+  broadcast();
+  return c.json(added);
+});
+app.delete('/api/calendar/connections/:id', async (c) => {
+  if (c.req.query('confirmed') !== '1') throw new UserError('Confirm disconnecting this account first.', 409);
+  await calendar.disconnect(c.req.param('id'));
+  broadcast();
+  return c.body(null, 204);
+});
+app.get('/api/microsoft/connect/:id', async (c) => {
+  setSetting(db, 'calendar.loginError', null);
+  return c.redirect(await microsoftAuthUrl(c.req.param('id'), `http://${config.host}:${config.port}/api/microsoft/callback`));
+});
+app.get('/api/microsoft/callback', async (c) => {
+  try {
+    if (!c.req.query('code')) throw new UserError('Microsoft sign-in was cancelled or refused.');
+    const id = await finishMicrosoftLogin(c.req.query('code')!, c.req.query('state') ?? '');
+    setSetting(db, `${id}.error`, null);
+    setSetting(db, 'calendar.loginError', null);
+    await calendar.sync();
+  } catch (error) {
+    setSetting(db, 'calendar.loginError', error instanceof UserError ? error.message : 'Microsoft sign-in could not finish. Please try again.');
+  }
+  broadcast();
+  return c.redirect('/#/calendar');
 });
 
 // Google sign-in. Desktop-app clients may redirect to any loopback port.

@@ -339,6 +339,14 @@ const MIGRATIONS: string[] = [
     revision       INTEGER NOT NULL DEFAULT 1
   );
   `,
+  `
+  -- Keep existing Google ids while isolating additional calendar accounts.
+  ALTER TABLE calendars ADD COLUMN connection_id TEXT NOT NULL DEFAULT 'google';
+  ALTER TABLE calendars ADD COLUMN remote_id TEXT;
+  UPDATE calendars SET remote_id = id;
+  ALTER TABLE events ADD COLUMN write_protected INTEGER NOT NULL DEFAULT 0;
+  CREATE INDEX idx_calendars_connection ON calendars(connection_id);
+  `,
 ];
 
 export type Db = DatabaseSync;

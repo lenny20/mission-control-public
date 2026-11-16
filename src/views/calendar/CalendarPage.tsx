@@ -1,3 +1,4 @@
+import { CalendarConnections } from '../../calendar/Connections.tsx';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { addDays, daysBetween, formatDow, formatLong, formatMonthYear, formatShort, weekStart, weekday, type DateStr } from '../../../shared/dates.ts';
 import type { CalEvent, CalendarStatus } from '../../../shared/calendar/types.ts';
@@ -72,7 +73,7 @@ export function CalendarPage({ view, date, today }: { view: CalView; date?: Date
   const newDate = from <= today && today < to ? today : view === 'month' ? `${anchor.slice(0, 7)}-01` : anchor;
   const go = (d: DateStr | undefined, v: CalView = view) => navigate({ area: 'calendar', view: v, date: d && d !== today ? d : undefined });
 
-  // Pull from Google when the calendar opens and whenever the window comes back into focus.
+  // Pull connected calendars when the calendar opens and whenever the window comes back into focus.
   useEffect(() => {
     const sync = () => void requestSync().catch(() => {});
     sync();
@@ -131,7 +132,7 @@ export function CalendarPage({ view, date, today }: { view: CalView; date?: Date
         <aside className="cal-side" aria-label="Calendar tools">
           <QuickAdd today={today} />
           <MiniMonth anchor={anchor} today={today} view={view} colours={colours} />
-          <GoogleBar status={status} />
+          <CalendarBar status={status} />
         </aside>
         <div className="cal-main">
           {error && !data ? (
@@ -154,32 +155,8 @@ export function CalendarPage({ view, date, today }: { view: CalView; date?: Date
 
 // ------------------------------------------------------------------ Google status and calendars
 
-function GoogleBar({ status }: { status: CalendarStatus | null }) {
+function CalendarBar({ status }: { status: CalendarStatus | null }) {
   if (!status) return <div className="cal-bar" />;
-  if (!status.configured) {
-    return (
-      <div className="cal-connect">
-        <div>
-          <strong>Google Calendar isn't set up yet.</strong>
-          <p className="muted">Events you add are saved here. Once the Google client file is in place, your Google calendars show up here too.</p>
-        </div>
-      </div>
-    );
-  }
-  if (!status.connected) {
-    return (
-      <div className="cal-connect">
-        <div>
-          <strong>Connect Google Calendar</strong>
-          <p className="muted">Shows your Google calendars here, and lets you add events to Google from the dashboard.</p>
-        </div>
-        <a className="btn btn-primary" href="/api/google/connect">
-          Connect
-        </a>
-      </div>
-    );
-  }
-  const needsLogin = !!status.error && /connect again|not connected|sign-in/i.test(status.error);
   const toggle = async (id: string, shown: boolean) => {
     try {
       await calMutate(() => api.put(`/api/calendar/calendars/${encodeURIComponent(id)}`, { shown }));
@@ -189,6 +166,7 @@ function GoogleBar({ status }: { status: CalendarStatus | null }) {
   };
   return (
     <div className="cal-bar">
+      <CalendarConnections status={status} />
       <ul className="cal-cals" aria-label="Calendars">
         <li>
           <span className="cal-chip static">
@@ -211,26 +189,7 @@ function GoogleBar({ status }: { status: CalendarStatus | null }) {
           </li>
         ))}
       </ul>
-      <p className={`cal-sync ${status.error ? 'bad' : ''}`}>
-        {status.error ? (
-          <>
-            {status.error}{' '}
-            {needsLogin ? (
-              <a className="link-btn" href="/api/google/connect">
-                Connect again
-              </a>
-            ) : (
-              <button className="link-btn" onClick={() => void requestSync(true).catch((e: Error) => toast(e.message, 'error'))}>
-                Try again
-              </button>
-            )}
-          </>
-        ) : status.lastSync ? (
-          <span title={`Last pulled from Google at ${new Date(status.lastSync).toLocaleTimeString('en-AU')}`}>Up to date with Google</span>
-        ) : (
-          'Pulling from Google…'
-        )}
-      </p>
+
     </div>
   );
 }

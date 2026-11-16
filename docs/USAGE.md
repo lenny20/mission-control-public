@@ -9,7 +9,8 @@ shell quoting differences on Windows. Use execution APIs with argument arrays.
 - Preserve screenshot attachments with --image and the actual available file path.
 - Read back exactly what the command reports. Never invent missing information.
 - Ask before --replace or --confirm. An identical resend may be unchanged.
-- Calendar entries are local by default. Only use google: true when requested.
+- Calendar entries are local by default. Use calendars to find destination ids.
+  Use calendarId only when requested; google: true still chooses the primary Google calendar.
   Deleting shared or invited events affects other people and always needs approval.
 - Gym screenshots must show every set. A best-set summary is not a full workout.
   Match day using program, or use null for an off-program session. Dumbbell kg is

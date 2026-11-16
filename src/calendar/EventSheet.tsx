@@ -46,7 +46,7 @@ type Draft = {
   endTime: string;
   location: string;
   notes: string;
-  google: boolean;
+  calendarId: string;
 };
 
 function fromEvent(ev: CalEvent): Draft {
@@ -61,7 +61,7 @@ function fromEvent(ev: CalEvent): Draft {
     endTime: ev.allDay ? '10:00' : localTime(e),
     location: ev.location ?? '',
     notes: plainNotes(ev.notes),
-    google: !!ev.calendarId,
+    calendarId: ev.calendarId ?? '',
   };
 }
 
@@ -82,7 +82,7 @@ function EventSheet({ editor, status, onClose }: { editor: EventEditor; status: 
     const d = (editor as Extract<EventEditor, { draft: unknown }>).draft;
     const start = d.start ?? '09:00';
     const [endDate, endTime] = d.end ? [d.endDate ?? d.date, d.end] : fromMinutes(toMinutes(d.date, start) + 60);
-    return { title: d.title ?? '', allDay: !!d.allDay, startDate: d.date, startTime: start, endDate: d.allDay ? (d.endDate ?? d.date) : endDate, endTime, location: d.location ?? '', notes: '', google: false };
+    return { title: d.title ?? '', allDay: !!d.allDay, startDate: d.date, startTime: start, endDate: d.allDay ? (d.endDate ?? d.date) : endDate, endTime, location: d.location ?? '', notes: '', calendarId: '' };
   }, [editor, existing]);
   const [draft, setDraft] = useState(initial);
   const [error, setError] = useState<string | null>(null);
@@ -90,9 +90,8 @@ function EventSheet({ editor, status, onClose }: { editor: EventEditor; status: 
 
   const calendars = status?.calendars ?? [];
   const cal = existing?.calendarId ? calendars.find((c) => c.id === existing.calendarId) : null;
-  const primary = calendars.find((c) => c.primary);
-  const readOnly = !!existing?.calendarId && !cal?.writable;
-  const canAddToGoogle = !!status?.connected && !!primary?.writable;
+  const readOnly = !!existing?.writeProtected || (!!existing?.calendarId && !cal?.writable);
+  const destinations = calendars.filter((c) => c.writable && ((c.connectionId ?? 'google') !== 'google' || c.primary));
   const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
   // Moving the start keeps the length, as in every calendar app.
@@ -112,8 +111,8 @@ function EventSheet({ editor, status, onClose }: { editor: EventEditor; status: 
     setBusy(true);
     try {
       if (!existing) {
-        await calMutate(() => api.post('/api/calendar/events', { title: draft.title, ...payloadTimes(draft), location: draft.location || null, notes: draft.notes || null, google: draft.google }));
-        toast(draft.google ? 'Event added, and to Google Calendar' : 'Event added');
+        await calMutate(() => api.post('/api/calendar/events', { title: draft.title, ...payloadTimes(draft), location: draft.location || null, notes: draft.notes || null, calendarId: draft.calendarId || null }));
+        toast(draft.calendarId ? 'Event added to the selected calendar' : 'Event added');
       } else {
         const patch: Record<string, unknown> = {};
         if (draft.title !== initial.title) patch.title = draft.title;
@@ -122,10 +121,10 @@ function EventSheet({ editor, status, onClose }: { editor: EventEditor; status: 
         const times = payloadTimes(draft);
         const before = payloadTimes(initial);
         if (times.start !== before.start || times.end !== before.end) Object.assign(patch, times);
-        if (draft.google && !initial.google) patch.google = true;
+        if (draft.calendarId && !initial.calendarId) patch.calendarId = draft.calendarId;
         if (Object.keys(patch).length) {
           await calMutate(() => api.put(`/api/calendar/events/${existing.id}`, patch));
-          toast(patch.google ? 'Saved, and added to Google Calendar' : 'Event saved');
+          toast(patch.calendarId ? 'Saved, and added to the selected calendar' : 'Event saved');
         }
       }
       onClose();
@@ -145,7 +144,7 @@ function EventSheet({ editor, status, onClose }: { editor: EventEditor; status: 
       : guests
         ? 'Other people are invited, so it can be removed for them too.'
         : cal
-        ? "It's removed from Google Calendar too."
+        ? "It's removed from its calendar service too."
         : undefined;
     if (!(await confirmAction({ title: `Delete “${existing.title}”?`, body }))) return;
     setBusy(true);
@@ -244,12 +243,13 @@ function EventSheet({ editor, status, onClose }: { editor: EventEditor; status: 
           </label>
 
           {!existing?.calendarId ? (
-            <label className={`check ${canAddToGoogle ? '' : 'disabled'}`}>
-              <input type="checkbox" checked={draft.google} disabled={!canAddToGoogle} onChange={(e) => set({ google: e.target.checked })} />
-              <span>
-                Also add to Google Calendar
-                <small className="faint">{canAddToGoogle ? primary!.name : 'Connect Google Calendar to use this.'}</small>
-              </span>
+            <label className="field">
+              <span>Save to</span>
+              <select value={draft.calendarId} onChange={(e) => set({ calendarId: e.target.value })}>
+                <option value="">Dashboard only</option>
+                {destinations.map((c) => <option key={c.id} value={c.id}>{c.name} — {status?.connections?.find((a) => a.id === (c.connectionId ?? 'google'))?.label ?? 'Google Calendar'}</option>)}
+              </select>
+              <small>Choose a connected calendar to save there as well. Subscriptions are read-only.</small>
             </label>
           ) : null}
         </fieldset>

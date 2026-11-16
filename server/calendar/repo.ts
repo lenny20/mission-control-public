@@ -1,6 +1,7 @@
 // Calendar storage. Everything here is local to the database; talking to
 // Google happens in service.ts, which calls these to record the result.
 
+import { createHash } from 'node:crypto';
 import { addDays, type DateStr } from '../../shared/dates.ts';
 import { exclusiveEnd, lastDay, type EventInput } from '../../shared/calendar/schemas.ts';
 import { dayRangeInstants, toInstant, toLocal } from '../../shared/calendar/time.ts';
@@ -27,11 +28,11 @@ export function setSetting(db: Db, key: string, value: string | null) {
 // ------------------------------------------------------------------ calendars
 
 function rowToCalendar(r: Row): CalendarInfo {
-  return { id: String(r.id), name: String(r.name), color: String(r.color), primary: !!r.is_primary, writable: !!r.writable, shown: !!r.shown };
+  return { id: String(r.id), name: String(r.name), color: String(r.color), primary: !!r.is_primary, writable: !!r.writable, shown: !!r.shown, connectionId: String(r.connection_id ?? 'google') };
 }
 
-export function listCalendars(db: Db): CalendarInfo[] {
-  return (db.prepare('SELECT * FROM calendars ORDER BY is_primary DESC, position, name').all() as Row[]).map(rowToCalendar);
+export function listCalendars(db: Db, connectionId?: string): CalendarInfo[] {
+  return (connectionId ? db.prepare('SELECT * FROM calendars WHERE connection_id = ? ORDER BY is_primary DESC, position, name').all(connectionId) : db.prepare('SELECT * FROM calendars ORDER BY is_primary DESC, position, name').all() as Row[]).map((r) => rowToCalendar(r as Row));
 }
 
 export function getCalendar(db: Db, id: string): CalendarInfo | null {
@@ -39,8 +40,8 @@ export function getCalendar(db: Db, id: string): CalendarInfo | null {
   return row ? rowToCalendar(row) : null;
 }
 
-export function primaryCalendar(db: Db): CalendarInfo | null {
-  const row = db.prepare('SELECT * FROM calendars WHERE is_primary = 1').get() as Row | undefined;
+export function primaryCalendar(db: Db, connectionId = 'google'): CalendarInfo | null {
+  const row = db.prepare('SELECT * FROM calendars WHERE is_primary = 1 AND connection_id = ?').get(connectionId) as Row | undefined;
   return row ? rowToCalendar(row) : null;
 }
 
@@ -49,15 +50,18 @@ export function primaryCalendar(db: Db): CalendarInfo | null {
  * if it's the main one or ticked in Google Calendar itself; after that, the
  * dashboard's own choice sticks. Calendars gone from the account are dropped.
  */
-export function saveCalendars(db: Db, found: (Omit<CalendarInfo, 'shown'> & { selected: boolean })[]) {
+export function saveCalendars(db: Db, found: (Omit<CalendarInfo, 'shown'> & { selected: boolean })[], connectionId = 'google') {
+  const remoteIds = new Map(found.map((c) => [storedCalendarId(connectionId, c.id), c.id]));
+  found = found.map((c) => ({ ...c, id: storedCalendarId(connectionId, c.id) }));
   transaction(db, () => {
-    const known = new Set(listCalendars(db).map((c) => c.id));
+    const known = new Set(listCalendars(db, connectionId).map((c) => c.id));
     found.forEach((c, i) => {
       if (known.has(c.id)) {
         db.prepare('UPDATE calendars SET name = ?, color = ?, is_primary = ?, writable = ?, position = ? WHERE id = ?').run(c.name, c.color, c.primary ? 1 : 0, c.writable ? 1 : 0, i, c.id);
       } else {
         db.prepare('INSERT INTO calendars (id, name, color, is_primary, writable, shown, position) VALUES (?, ?, ?, ?, ?, ?, ?)').run(c.id, c.name, c.color, c.primary ? 1 : 0, c.writable ? 1 : 0, c.primary || c.selected ? 1 : 0, i);
       }
+      db.prepare('UPDATE calendars SET connection_id = ?, remote_id = ? WHERE id = ?').run(connectionId, remoteIds.get(c.id)!, c.id);
     });
     const ids = new Set(found.map((c) => c.id));
     for (const id of known) {
@@ -70,7 +74,7 @@ export function saveCalendars(db: Db, found: (Omit<CalendarInfo, 'shown'> & { se
 
 export function setCalendarShown(db: Db, id: string, shown: boolean) {
   const res = db.prepare('UPDATE calendars SET shown = ? WHERE id = ?').run(shown ? 1 : 0, id);
-  if (res.changes === 0) throw new UserError('That calendar is not on the connected Google account.', 404);
+  if (res.changes === 0) throw new UserError('That calendar is not on a connected account.', 404);
 }
 
 // ------------------------------------------------------------------ events
@@ -91,6 +95,7 @@ function rowToEvent(r: Row): CalEvent {
     hasGuests: !!r.has_guests,
     source: String(r.source) as EventSource,
     updatedAt: String(r.updated_at),
+    writeProtected: !!r.write_protected,
   };
 }
 
@@ -106,18 +111,18 @@ export function listEvents(db: Db, from: DateStr, to: DateStr, timeZone: string)
   const [fromI, toI] = dayRangeInstants(from, to, timeZone);
   const rows = db
     .prepare(
-      `SELECT events.*, calendars.is_primary AS cal_primary FROM events LEFT JOIN calendars ON calendars.id = events.calendar_id
+      `SELECT events.*, calendars.is_primary AS cal_primary, calendars.connection_id AS cal_connection FROM events LEFT JOIN calendars ON calendars.id = events.calendar_id
        WHERE ${OVERLAPS} AND (calendar_id IS NULL OR calendars.shown = 1) ORDER BY start, events.id`,
     )
     .all({ from, to, fromI, toI }) as Row[];
   const best = new Map<string, Row>();
   for (const r of rows) {
     if (r.google_id == null) continue;
-    const key = String(r.google_id);
+    const key = JSON.stringify([r.cal_connection ?? 'google', r.google_id]);
     const had = best.get(key);
     if (!had || (!had.cal_primary && r.cal_primary)) best.set(key, r);
   }
-  return rows.filter((r) => r.google_id == null || best.get(String(r.google_id)) === r).map(rowToEvent);
+  return rows.filter((r) => r.google_id == null || best.get(JSON.stringify([r.cal_connection ?? 'google', r.google_id])) === r).map(rowToEvent);
 }
 
 export function getEvent(db: Db, id: number): CalEvent {
@@ -170,6 +175,7 @@ export type GoogleEvent = {
   meetLink: string | null;
   recurring: boolean;
   hasGuests: boolean;
+  writeProtected?: boolean;
 };
 
 type EventFields = { title: string; allDay: boolean; start: string; end: string; location: string | null; notes: string | null };
@@ -202,6 +208,7 @@ export function insertEvent(db: Db, fields: EventFields, source: EventSource, go
       t,
       t,
     );
+  db.prepare('UPDATE events SET write_protected = ? WHERE id = ?').run(g?.writeProtected ? 1 : 0, Number(res.lastInsertRowid));
   return getEvent(db, Number(res.lastInsertRowid));
 }
 
@@ -234,6 +241,7 @@ export function updateEvent(db: Db, id: number, fields: EventFields, google?: { 
     g ? t : null,
     id,
   );
+  if (g) db.prepare('UPDATE events SET write_protected = ? WHERE id = ?').run(g.writeProtected ? 1 : 0, id);
   return getEvent(db, id);
 }
 
@@ -258,7 +266,7 @@ export function deleteEvent(db: Db, id: number) {
  * a pulled copy older than the stored one is ignored, and an event linked to
  * Google after the pull began is never removed for being missing from it.
  */
-export function applyPull(db: Db, calendarId: string, pulled: GoogleEvent[], window: { from: DateStr; to: DateStr }, pulledAt: string, timeZone: string): number {
+export function applyPull(db: Db, calendarId: string, pulled: GoogleEvent[], window: { from: DateStr; to: DateStr }, pulledAt: string, timeZone: string, source: EventSource = 'google'): number {
   return transaction(db, () => {
     let changes = 0;
     const find = db.prepare('SELECT id, google_etag, google_updated FROM events WHERE calendar_id = ? AND google_id = ?');
@@ -270,7 +278,7 @@ export function applyPull(db: Db, calendarId: string, pulled: GoogleEvent[], win
       if (!row) {
         // Deleted here after this pull began: Google's answer is already out of date.
         if (deletedSince.get(calendarId, g.googleId, pulledAt)) continue;
-        insertEvent(db, g, 'google', { calendarId, event: g });
+        insertEvent(db, g, source, { calendarId, event: g });
         changes++;
         continue;
       }
@@ -280,6 +288,7 @@ export function applyPull(db: Db, calendarId: string, pulled: GoogleEvent[], win
         `UPDATE events SET title = ?, all_day = ?, start = ?, end = ?, location = ?, notes = ?, google_etag = ?, google_updated = ?,
            html_link = ?, meet_link = ?, recurring = ?, has_guests = ?, updated_at = ? WHERE id = ?`,
       ).run(g.title, g.allDay ? 1 : 0, g.start, g.end, g.location, g.notes, g.etag, g.updated, g.htmlLink, g.meetLink, g.recurring ? 1 : 0, g.hasGuests ? 1 : 0, t, Number(row.id));
+      db.prepare('UPDATE events SET write_protected = ? WHERE id = ?').run(g.writeProtected ? 1 : 0, Number(row.id));
       changes++;
     }
 
@@ -300,4 +309,14 @@ export function applyPull(db: Db, calendarId: string, pulled: GoogleEvent[], win
     }
     return changes;
   });
+}
+
+/** Calendar URLs and provider ids stay on the server; the UI sees only an opaque id. */
+export function storedCalendarId(connectionId: string, remoteId: string) {
+  return connectionId === 'google' ? remoteId : `${connectionId}:${createHash('sha256').update(remoteId).digest('hex').slice(0, 24)}`;
+}
+export function remoteCalendarId(db: Db, id: string): string {
+  const row = db.prepare('SELECT remote_id FROM calendars WHERE id = ?').get(id) as Row | undefined;
+  if (!row) throw new UserError('That calendar is no longer connected.', 404);
+  return String(row.remote_id ?? id);
 }

@@ -25,7 +25,9 @@ provider's privacy settings; local dashboard storage does not make AI chat offli
 ## What you will do
 
 Choose your name and shortcuts, decide which connections you want, and sign into
-your own accounts when asked. All connections are optional. You can use local
+your own accounts when asked. Calendar accounts can use Google, Outlook / Microsoft 365, iCloud, Yahoo,
+Fastmail or another CalDAV service. Calendar subscription links are read-only.
+All connections are optional. You can use local
 calendar events, projects, recipes, notes and manual logging without API keys.
 
 After setup, open http://127.0.0.1:4747. Keep the server running while you use it.
@@ -52,4 +54,5 @@ Software task and Film & TV templates. Money supports AU/US records and AUD/USD;
 it is not a general international tax tool. Sidebar choices hide shortcuts,
 not records; all areas remain reachable through Search.
 
-Read docs/SETUP.md for installation, connections, updates and backups.
+Read docs/SETUP.md for installation, updates and backups, and docs/CALENDARS.md
+for calendar connections and their current limits.

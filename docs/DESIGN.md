@@ -13,7 +13,10 @@ server/profile.ts. No personal name is a source-code default. Fresh installation
 get an exercise catalogue but no training program. Document search is opt-in for
 personal folders. Sidebar shortcuts are preferences, not access controls.
 
-Google, TMDB and OMDb are optional. Credentials are local files, never browser
+Google, Microsoft Graph, iCloud, Yahoo, Fastmail, CalDAV, ICS subscriptions, TMDB
+and OMDb are optional. Calendar storage is scoped by connection; existing Google
+ids stay unchanged. The legacy google_* column names also hold other provider
+identifiers. Read docs/CALENDARS.md for connection and recurrence limits. Credentials are local files, never browser
 configuration or release assets. Google writes use the connected account's
 primary calendar. Shared-event deletions need explicit confirmation.
 

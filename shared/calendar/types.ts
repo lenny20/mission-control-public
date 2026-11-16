@@ -1,7 +1,8 @@
+import type { ConnectionStatus } from './connections.ts';
 import type { DateStr } from '../dates.ts';
 
 /** 'work' marks a card's due date: shown on the calendar, opened on its board (negative id). */
-export type EventSource = 'dashboard' | 'chat' | 'google' | 'work';
+export type EventSource = 'dashboard' | 'chat' | 'google' | 'remote' | 'work';
 
 /**
  * A timed event's `start` and `end` are UTC instants (ISO). An all-day event's
@@ -24,6 +25,7 @@ export type CalEvent = {
   hasGuests: boolean;
   source: EventSource;
   updatedAt: string;
+  writeProtected?: boolean;
 };
 
 export type CalendarInfo = {
@@ -33,6 +35,7 @@ export type CalendarInfo = {
   primary: boolean;
   writable: boolean;
   shown: boolean;
+  connectionId?: string;
 };
 
 export type CalendarStatus = {
@@ -45,6 +48,7 @@ export type CalendarStatus = {
   error: string | null;
   calendars: CalendarInfo[];
   timeZone: string;
+  connections?: ConnectionStatus[];
 };
 
 export type CalendarRange = { from: DateStr; to: DateStr; events: CalEvent[]; status: CalendarStatus };

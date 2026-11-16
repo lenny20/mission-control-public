@@ -1,3 +1,4 @@
+import { importConnection } from '../server/calendar/connections.ts';
 // The logging command. Claude (or the user) runs this to put data into the
 // dashboard; it uses the same checks as the dashboard's own edit screens.
 //
@@ -77,10 +78,15 @@ Setup
                             note (key = file; it moves to the notes folder's .trash).
 
 Calendar
-  event '<json>'            Add an event: { "title", "start", "end"?, "location"?, "notes"?, "google"? }
+  calendars                 List accounts, calendars and destination ids; never credentials.
+  calendar-connect <file>  Import a private JSON file for microsoft, icloud, caldav or ics.
+  calendar-disconnect <id> --confirm
+                            Disconnect locally. Ask the user first. Remote events are kept.
+  event '<json>'            Add an event: { "title", "start", "end"?, "location"?, "notes"?, "google"?, "calendarId"? }
                             start/end are local times "2026-11-10T15:00", or dates "2026-11-10" for
                             all day (end = the last day). end defaults to an hour later, or the same day.
-                            "google": true also puts it on the main Google calendar. Default: dashboard only.
+                            "calendarId": an id from calendars chooses a writable destination.
+                            "google": true still chooses the main Google calendar. Default: dashboard only.
   event-edit <id> '<json>'  Change an event: any of title, start, end, location, notes;
                             "google": true adds a dashboard-only event to Google. Changes Google too.
   events [date] [days]      Events with their ids, from date (default today) for days (default 7).
@@ -242,6 +248,16 @@ async function run(db: Db, args: Args): Promise<string> {
   const exercises = () => new Map(repo.listExercises(db).map((e) => [e.id, e]));
 
   switch (args.command) {
+    case 'calendar-connect': {
+      const c = importConnection(args.positional[0] ?? '');
+      return `Calendar connection added: ${c.label} (${c.provider}), id ${c.id}. Open Calendar to sign in or sync. Credentials were not displayed.`;
+    }
+    case 'calendars': return JSON.stringify(calendar(db).status(), null, 2);
+    case 'calendar-disconnect': {
+      if (!args.confirm) throw new UserError('Ask the user before disconnecting. Then run calendar-disconnect <id> --confirm.');
+      await calendar(db).disconnect(args.positional[0] ?? '');
+      return 'Calendar disconnected locally. Its events on the original service were not changed.';
+    }
     case 'profile': return JSON.stringify(getProfile(db), null, 2);
     case 'profile-set': return `Settings saved: ${JSON.stringify(saveProfile(db, payload(args.positional[0])))}`;
     case 'doctor': return JSON.stringify(doctor(db), null, 2);
@@ -437,15 +453,15 @@ async function run(db: Db, args: Args): Promise<string> {
       const days = Number(args.positional[1] ?? 7);
       if (!Number.isInteger(days) || days < 1 || days > 400) throw new UserError('days is a whole number from 1 to 400.');
       const { events, status } = calendar(db).range(from, addDays(from, days));
-      const head = status.connected ? `Google: ${status.account}${status.error ? ` (problem: ${status.error})` : ''}` : 'Google Calendar is not connected; dashboard events only.';
+      const head = status.connected ? `Calendars: ${status.account}${status.error ? ` (problem: ${status.error})` : ''}` : 'No calendar accounts connected; dashboard events only.';
       return [head, ...events.map((e) => `  [id ${e.id}] ${describeEvent(db, e)}`)].join('\n') + (events.length ? '' : '\n  Nothing on.');
     }
 
     case 'calendar-sync': {
       const changes = await calendar(db).sync();
       const status = calendar(db).status();
-      if (!status.connected) return 'Google Calendar is not connected. Connect it from the Calendar screen.';
-      return `Pulled from Google: ${changes} change${changes === 1 ? '' : 's'}. Calendars shown: ${status.calendars.filter((c) => c.shown).map((c) => c.name).join(', ')}.`;
+      if (!status.connected) return 'No calendar accounts are connected. Add one from the Calendar screen.';
+      return `Pulled from calendar accounts: ${changes} change${changes === 1 ? '' : 's'}. Calendars shown: ${status.calendars.filter((c) => c.shown).map((c) => c.name).join(', ')}.`;
     }
 
     case 'card': {

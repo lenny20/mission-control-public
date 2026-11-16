@@ -51,6 +51,7 @@ export const eventInput = z
     notes: optionalText(8_000, 'notes'),
     /** Also put it on the Google calendar the dashboard writes to. */
     google: z.boolean().default(false),
+    calendarId: z.string().min(1).max(300).nullable().default(null),
   })
   .transform(checkTimes);
 export type EventInput = z.infer<typeof eventInput>;
@@ -62,6 +63,7 @@ export type EventInput = z.infer<typeof eventInput>;
  * as a pair. `google: true` adds a dashboard-only event to Google.
  */
 export const eventPatch = z.object({
+  calendarId: z.string().min(1).max(300).optional(),
   title: title.optional(),
   start: when.optional(),
   end: when.optional(),

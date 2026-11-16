@@ -54,7 +54,14 @@ additional folders they want searched. Use Notes, Search, Places searched, or
 read/set them with docs-settings. Empty roots means no extra folders. Notes are
 in ~/Documents/Mission Control/Notes unless configured otherwise.
 
-## 3. Optional Google Calendar
+## 3. Optional calendars
+
+Google, Outlook.com, Microsoft 365, iCloud, Yahoo, Fastmail and other CalDAV
+accounts are supported. Open Calendar, Add account. Follow CALENDARS.md for the
+chosen provider. Subscriptions are read-only; full accounts allow editing when
+the account has permission. Each person uses their own connection details.
+
+### Google Calendar
 
 Use the user's own Google Cloud project and account. Follow Google's current
 Desktop app OAuth instructions:
