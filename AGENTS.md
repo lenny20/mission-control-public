@@ -1,6 +1,11 @@
 # Mission Control: setup and everyday use
 
-Read docs/SETUP.md before installation and docs/USAGE.md before logging.
+Read docs/ONBOARDING.md at the start of setup or when an existing user asks for
+an introduction. Read docs/SETUP.md before installation and docs/USAGE.md before
+logging. Give the welcome tour in your own simple words, demonstrate direct and
+chat-based entry, explain customisation, and always offer optional phone access
+through docs/PHONE.md. Ask before pairing devices or changing power settings.
+Already running means skip installation; a tour does not require a reset.
 Run all commands from this dashboard's folder. Start every command shown to the
 user with a change to the actual installation directory. Use the correct shell
 for their operating system; never copy another person's home path.

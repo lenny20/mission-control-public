@@ -14,8 +14,9 @@ Extract the ZIP into a permanent folder in your own user account. Avoid a shared
 or cloud-synced folder because it will hold personal records and credentials.
 Open that folder in a local Codex or Claude Code session and say:
 
-> Read AGENTS.md and docs/SETUP.md. Help me set up my own dashboard. Ask me one
-> simple question at a time, do the technical work, and show me how to use it.
+> Read AGENTS.md and docs/ONBOARDING.md. Help me set up my own dashboard, or show
+> me around if it is already running. Ask one simple question at a time. Explain
+> how to use it, make it my own, and optionally connect my phone.
 
 Your agent needs permission to run commands on this computer. A chat running only
 in a remote cloud workspace will not automatically reach this installation.
@@ -44,10 +45,32 @@ Use the dashboard's Add and Edit buttons, or message the agent in this project:
 - “Put lunch with Alex on my dashboard calendar tomorrow at 1.”
 - “Here is my workout history screenshot. Please log it.”
 
-Ask for Google explicitly when you want an event sent there. Your agent should
+Say which connected calendar you want when an event should be saved there. Your agent should
 read back each save and ask before replacing conflicting information.
 For logging from another project, ask your agent to load this installation's
 AGENTS.md and run its logging command from this folder.
+
+## Make it your own
+
+Change your preferences and sidebar shortcuts in Your dashboard. Set up your own
+workouts and projects, or ask your agent to do it with you. For bigger changes,
+describe what you want: “Build a travel tab with packing lists” or “Add a tool for
+my client work.” Your agent can build and test changes to your copy. New tabs and
+bespoke tools involve development; they are not built-in switches. Ask the agent
+to preserve your custom changes when updating the dashboard.
+
+## Use it from your phone
+
+Ask “Help me connect my phone.” With a supported ChatGPT/Codex connection or Claude
+Code Remote Control, you can message the agent on your home computer to add records,
+look things up and request changes. Keep that computer awake, online, and running
+the agent. Keep the dashboard server running for its page and calendar sync.
+
+The setup agent will offer this and walk you through [phone setup](docs/PHONE.md)
+if you want it. It links the phone to the home agent; opening the dashboard website
+directly in a phone browser needs separate private access.
+
+## Current scope
 
 The time zone follows this computer. Health uses kilograms. Work currently offers
 Software task and Film & TV templates. Money supports AU/US records and AUD/USD;

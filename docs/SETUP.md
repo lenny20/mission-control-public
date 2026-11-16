@@ -1,5 +1,8 @@
 # Agent-guided setup
 
+Begin with the short welcome in ONBOARDING.md so the person knows what they are
+setting up. For an existing installation, skip completed setup and give the tour.
+
 Work in the extracted dashboard folder. Ask one question at a time and do the
 technical steps yourself. Start with the operating system and what the person
 wants to use. Do not require every integration to finish setup.
@@ -116,21 +119,29 @@ empty. With their agreement, create a harmless local card through the logging
 command, find it in the dashboard, edit it there, and read it back with card-show.
 Explain how to add and correct records through both routes.
 
-Show three examples relevant to what they want. Explain where data lives, how to
-start the dashboard, and how to return to this agent/project next time. For phone
-logging, arrange an agent session that actually runs on this computer. Do not
-expose the dashboard to the internet to make phone chat work.
+Follow ONBOARDING.md to demonstrate the two ways to enter data and explain how
+custom tabs, workouts and work tools can make this their own. Always offer phone
+control, then follow PHONE.md for their chosen ecosystem if they accept. Verify
+the phone talks to this installation before calling it connected. Finish with a
+short personal handover, including how to start the dashboard and which chat to
+return to. Do not expose the dashboard to the internet to make phone chat work.
 
 ## Backups and updates
 
-Before updating, stop the dashboard and logging agents. Back up the entire data
-folder plus the notes folder and any exports kept outside it. Include SQLite WAL
+Before updating, inspect local code changes, including custom tabs and tools. Stop
+the dashboard and logging agents. Make a private backup of the whole installation,
+including its customised code and data, plus notes and exports kept outside it. Include SQLite WAL
 and SHM files if present. Backups contain credentials and sensitive records: keep
 them private, and never send them to the person who supplied the software.
 Restore while stopped, to the same configured folders, then start and check.
 
-To update, back up first, replace application files from a reviewed release while
-retaining data and notes, and rerun setup. Database migrations run automatically
+For an unchanged installation, update application files from a reviewed release
+while retaining data and notes, then rerun setup. For a customised installation,
+have the agent compare the new release with local code and merge it while preserving
+the user’s changes. Reconcile any custom database migrations before starting the
+updated code; never overwrite an applied migration. Do not blindly replace
+customised files. Test the custom tools
+and saved records after the update before discarding any backup. Database migrations run automatically
 at startup. If an update fails, keep the backup; do not reset the database or
 attempt a rollback using old code against a migrated database.
 

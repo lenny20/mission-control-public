@@ -29,3 +29,8 @@ shell quoting differences on Windows. Use execution APIs with argument arrays.
 Helpful commands: cards, card-show, projects, events, program, show, recipes,
 recipe-show, notes, note-show, watchlist, profile and doctor. Inspect help for the
 payload and options. Run commands only when the user asks for the relevant action.
+
+When the person asks how this works or what they can customise, use ONBOARDING.md
+for a short, personal explanation. Offer PHONE.md when they want phone control.
+In a remote session, confirm the host and installation folder before using the
+logging command. Keep using the same saved records, not a cloud or worktree copy.
