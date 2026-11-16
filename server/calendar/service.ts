@@ -120,8 +120,8 @@ export function createCalendarService(db: Db, timeZone: string, providers: () =>
           ...(times && timesChanged ? { times } : {}),
         };
 
-        if (ev.calendarId && (patch.google || (patch.calendarId && patch.calendarId !== ev.calendarId))) throw new UserError('An event cannot be moved between accounts here. Create a separate event in the destination calendar.');
         const cal = editable(ev);
+        if (cal && ((patch.google && (cal.connectionId ?? 'google') !== 'google') || (patch.calendarId && patch.calendarId !== ev.calendarId))) throw new UserError('An event cannot be moved between accounts here. Create a separate event in the destination calendar.');
         if (cal) {
           if (Object.keys(changed).length === 0) return ev;
           const g = await providerFor(cal).patchEvent(repo.remoteCalendarId(db, cal.id), repo.googleIdOf(db, id)!, changed, timeZone);
